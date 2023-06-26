@@ -1,27 +1,56 @@
+#include "game_window.hpp"
+#include "level.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <cassert>
+#include <climits>
+#include <unistd.h>
 
-int main()
-{
-    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML 게임");
-    sf::CircleShape shape(50.f);
-    shape.setFillColor(sf::Color::Green);
+class Game {
+public:
+  Game() {}
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
+  void run() {
+    sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "sfmlZelda");
+    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(FPS);
+
+    while (window.isOpen()) {
+      sf::Event event;
+      while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+          return window.close();
         }
+      }
 
-        // 게임 로직을 여기에서 업데이트합니다.
+      // 게임 로직을 여기에서 업데이트합니다.
+      level.run();
 
-        window.clear();
-        window.draw(shape);
-        window.display();
+      // (off-screen render 된 texture 를) 화면에 출력 합니다.
+      window.clear();
+      const sf::Texture &texture = GameWindow::instance().screen().getTexture();
+      sf::Sprite sprite(texture);
+      window.draw(sprite);
+      window.display();
     }
+  }
 
-    return 0;
+private:
+  Level level;
+};
+
+void print_cwd() {
+  char cwd[PATH_MAX];
+  assert(getcwd(cwd, sizeof(cwd)) != NULL);
+  printf("Current working dir: %s\n", cwd);
 }
 
+int main(int argc, char *argv[]) {
+  print_cwd();
+
+  Game game;
+  game.run();
+
+  return 0;
+}
