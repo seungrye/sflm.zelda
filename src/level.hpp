@@ -14,6 +14,7 @@ public:
   YSortCameraGroup();
   void custom_draw(Player &player);
   void update();
+  operator std::vector<SpriteTexture>&() { return this->sprites; }
 
 private:
   unsigned half_width;
@@ -34,7 +35,7 @@ public:
 
 private:
   YSortCameraGroup visible_sprites;
-  std::vector<SpriteTexture> obstacles_sprites;
+  std::vector<SpriteTexture> obstacle_sprites;
   Player player;
 };
 
