@@ -13,44 +13,17 @@
 
 class SpriteTexture {
 public:
-  SpriteTexture() : texture_(std::make_shared<sf::Texture>()) {}
-  SpriteTexture(unsigned width, unsigned height) : texture_(std::make_shared<sf::Texture>()) {
-    auto r = this->texture_->create(width, height);
-    assert(r);
-    this->sprite_.setTexture(*this->texture_);
-    auto rect = this->sprite_.getTextureRect();
-    this->rect_ = py::Rect(rect);
-  }
-  SpriteTexture(const std::string &path) : texture_(std::make_shared<sf::Texture>()) {
-    auto r = this->loadFromFile(path);
-    assert(r);
-  }
-  bool loadFromFile(const std::string &filename,
-                    const sf::IntRect &area = sf::IntRect()) {
-    auto r = this->texture_->loadFromFile(filename);
-    if (r) {
-      this->sprite_.setTexture(*this->texture_);
-      auto rect = this->sprite_.getTextureRect();
-      this->rect_ = py::Rect(rect);
-    }
-    return r;
-  }
+  SpriteTexture();
+  SpriteTexture(unsigned width, unsigned height);
+  SpriteTexture(const std::string &path);
 
-  const sf::IntRect &getTextureRect() { return this->sprite_.getTextureRect(); }
-
-  void move(const sf::Vector2f &offset) { this->sprite_.setOrigin(-offset); }
-
-  const sf::Sprite &surf() { return this->sprite_; }
-
-  const py::Rect &get_rect(const std::pair<std::string, sf::Vector2u> &pos) {
-    if (!pos.first.compare("topleft")) {
-      this->rect_ = py::Rect(pos.second.x, pos.second.y, this->rect_.width,
-                             this->rect_.height);
-    }
-    return this->rect_;
-  }
-
-  const py::Rect &rect() { return this->rect_; }
+  bool loadFromFile(const std::string &filename, const sf::IntRect &area = sf::IntRect());
+ 
+  void move(const sf::Vector2f &offset);
+  const sf::IntRect &getTextureRect();
+  const py::Rect &get_rect(const std::pair<std::string, sf::Vector2u> &pos);
+  const py::Rect &rect();
+  const sf::Sprite &surf();
 
 protected:
   std::shared_ptr<sf::Texture> texture_; //! 필수
