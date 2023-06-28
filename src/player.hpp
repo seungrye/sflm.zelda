@@ -4,21 +4,14 @@
 #include "pygame_adapter.hpp"
 #include "support.hpp"
 #include <SFML/Graphics.hpp>
+#include <memory>
 
-class Player {
+class Player : public SpriteTexture {
 public:
   Player() = default;
-  Player(const sf::Vector2u &pos,
-         std::vector<std::vector<SpriteTexture>> sprite_group,
-         std::vector<SpriteTexture> obstacle_sprites);
-
-public:
-  py::Rect rect;
+  Player(const sf::Vector2u &pos, std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites);
 
 private:
-  // sf::Texture texture;
-  // sf::Sprite image;
-  SpriteTexture sprite_;
   py::Rect hitbox;
 };
 

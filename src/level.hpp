@@ -14,15 +14,15 @@ public:
   YSortCameraGroup();
   void custom_draw(Player &player);
   void update();
-  operator std::vector<SpriteTexture>&() { return this->sprites; }
+  void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
 
 private:
   unsigned half_width;
   unsigned half_height;
-  sf::Vector2u offset;
+  sf::Vector2i offset;
 
   SpriteTexture floor;
-  std::vector<SpriteTexture> sprites;
+  std::vector<std::shared_ptr<SpriteTexture>> sprites;
 };
 
 class Level {
@@ -35,7 +35,7 @@ public:
 
 private:
   YSortCameraGroup visible_sprites;
-  std::vector<SpriteTexture> obstacle_sprites;
+  std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
   Player player;
 };
 
