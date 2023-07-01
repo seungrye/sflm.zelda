@@ -63,13 +63,14 @@ void Level::create_map() {
     }
   }
 
-  this->player = Player(sf::Vector2u(1500, 1500), this->obstacle_sprites);
+  this->player = std::make_shared<Player>(sf::Vector2u(1500, 1500), this->obstacle_sprites);
+  this->visible_sprites.push_back(this->player);
 }
 void Level::create_attack() {}
 void Level::destroy_attack() {}
 void Level::run() {
   visible_sprites.custom_draw(player);
-  visible_sprites.update();
+  this->player->update();
 }
 
 YSortCameraGroup::YSortCameraGroup() {
@@ -83,9 +84,9 @@ YSortCameraGroup::YSortCameraGroup() {
   assert(r);
 }
 
-void YSortCameraGroup::custom_draw(Player &player) {
-  this->offset.x = player.rect().centerx - this->half_width;
-  this->offset.y = player.rect().centery - this->half_height;
+void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player) {
+  this->offset.x = player->rect().centerx - this->half_width;
+  this->offset.y = player->rect().centery - this->half_height;
 
   // drawing the floor
   auto floor_offset_pos = sf::Vector2f(this->floor.rect().left - this->offset.x,

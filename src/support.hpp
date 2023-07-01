@@ -25,8 +25,10 @@ public:
   const py::Rect &rect();
   const sf::Sprite &surf();
 
-protected:
+public:
   std::shared_ptr<sf::Texture> texture_; //! 필수
+
+protected:
   sf::Sprite sprite_;
   py::Rect rect_;
 };

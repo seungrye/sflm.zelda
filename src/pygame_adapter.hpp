@@ -2,6 +2,7 @@
 #define __PYGAME_ADAPTER_HPP__
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 
 namespace py {
 class Rect : public sf::IntRect {
@@ -19,6 +20,7 @@ public:
   py::Rect inflate(int x, int y) {
     return py::Rect(this->left, this->top, this->width + x, this->height + y);
   }
+  const sf::Vector2u center() { return {this->centerx, this->centery}; }
 
 public:
   unsigned centerx;

@@ -7,12 +7,13 @@
 #include "support.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <memory>
 #include <vector>
 
 class YSortCameraGroup {
 public:
   YSortCameraGroup();
-  void custom_draw(Player &player);
+  void custom_draw(std::shared_ptr<Player> player);
   void update();
   void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
 
@@ -36,7 +37,7 @@ public:
 private:
   YSortCameraGroup visible_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
-  Player player;
+  std::shared_ptr<Player> player;
 };
 
 #endif

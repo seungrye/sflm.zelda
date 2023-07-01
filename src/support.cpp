@@ -1,5 +1,6 @@
 #include "support.hpp"
 #include "level.hpp"
+#include "pygame_adapter.hpp"
 #include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
@@ -46,17 +47,24 @@ void SpriteTexture::move(const sf::Vector2f &offset) {
 
 const sf::Sprite &SpriteTexture::surf() { return this->sprite_; }
 
-const py::Rect &SpriteTexture::get_rect(const std::pair<std::string, sf::Vector2u> &pos) {
+const py::Rect &
+SpriteTexture::get_rect(const std::pair<std::string, sf::Vector2u> &pos) {
   if (!pos.first.compare("topleft")) {
     this->rect_ = py::Rect(pos.second.x, pos.second.y, this->rect_.width,
                            this->rect_.height);
+  } else if (!pos.first.compare("center")) {
+    auto diff = this->rect_.center() - pos.second;
+    this->rect_ = py::Rect(this->rect_.left + diff.x, this->rect_.top + diff.y,
+                           this->rect_.width, this->rect_.height);
   }
+
   return this->rect_;
 }
 
 const py::Rect &SpriteTexture::rect() { return this->rect_; }
 
-std::vector<std::vector<std::string>> import_csv_layout(const std::string &filename) {
+std::vector<std::vector<std::string>>
+import_csv_layout(const std::string &filename) {
   auto terrain_map = std::vector<std::vector<std::string>>();
 
   std::ifstream file(filename);
@@ -74,7 +82,8 @@ std::vector<std::vector<std::string>> import_csv_layout(const std::string &filen
   return std::move(terrain_map);
 }
 
-std::vector<std::shared_ptr<SpriteTexture>> import_folder(const std::string &folder) {
+std::vector<std::shared_ptr<SpriteTexture>>
+import_folder(const std::string &folder) {
   auto surface_list = std::vector<std::shared_ptr<SpriteTexture>>{};
 
   for (const auto &entry :
