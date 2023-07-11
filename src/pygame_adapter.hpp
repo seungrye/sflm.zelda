@@ -3,9 +3,48 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cmath>
 
 namespace py
 {
+  template <typename T>
+  class Vector2 : public sf::Vector2<T>
+  {
+  public:
+    Vector2() = default;
+    Vector2(T X, T Y) : sf::Vector2<T>(X, Y)
+    {
+    }
+    /**
+     * @brief 벡터의 유클리드 크기 반환
+     * @see http://www.fundza.com/vectors/normalize/
+     * @see https://runebook.dev/ko/docs/pygame/ref/math
+     *
+     * @return float
+     */
+    float magnitude()
+    {
+      return sqrt((this->x * this->x) + (this->y * this->y));
+    }
+
+    /**
+     * @brief 방향은 같지만, 길이가 1인 벡터 반환
+     * @see https://runebook.dev/ko/docs/pygame/ref/math
+     * @see https://eastroot1590.tistory.com/entry/%EB%8B%A8%EC%9C%84%EB%B2%A1%ED%84%B0-%EA%B5%AC%ED%95%98%EB%8A%94-%EA%B3%B5%EC%8B%9Dvector-normalize
+     *
+     * @return py::Vector2<T>
+     */
+    py::Vector2<T> normalize()
+    {
+      auto length = this->magnitude();
+      return {static_cast<T>(this->x / length), static_cast<T>(this->y / length)};
+    }
+  };
+
+  typedef Vector2<int> Vector2i;
+  typedef Vector2<unsigned int> Vector2u;
+  typedef Vector2<float> Vector2f;
+
   class Rect : public sf::IntRect
   {
   public:

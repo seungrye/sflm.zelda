@@ -34,7 +34,7 @@ private:
   std::string status;
   int frame_index;
   float animation_speed;
-  sf::Vector2i direction;
+  py::Vector2i direction;
   int speed;
   bool attacking;
   sf::Time attack_cooldown;

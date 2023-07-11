@@ -152,9 +152,9 @@ void Player::collision(const std::string& direction) {
 
 void Player::move(int speed) {
   // move same speed in x and y direction
-  // if (this->direction.magnitude() != 0) {
-  //   this->direction = this->direction.normalize();
-  // }
+  if (this->direction.magnitude() != 0) {
+    this->direction = this->direction.normalize();
+  }
 
   this->hitbox.transform(this->direction.x * speed, 0);
   this->collision("horizontal");
