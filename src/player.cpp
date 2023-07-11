@@ -140,6 +140,30 @@ void Player::update_sprite(std::shared_ptr<SpriteTexture> sprite) {
   this->rect_ = sprite->rect();
 }
 
+void Player::collision(const std::string& direction) {
+  if (!direction.compare("horizontal")) {
+
+  }
+  else
+  if (!direction.compare("vertical")) {
+
+  }
+}
+
+void Player::move(int speed) {
+  // move same speed in x and y direction
+  // if (this->direction.magnitude() != 0) {
+  //   this->direction = this->direction.normalize();
+  // }
+
+  this->hitbox.transform(this->direction.x * speed, 0);
+  this->collision("horizontal");
+  this->hitbox.transform(0, this->direction.y * speed);
+  this->collision("vertical");
+
+  this->rect_.center(this->hitbox.center());
+}
+
 void Player::animate() {
   auto animation = this->animations[this->status];
   this->frame_index += this->animation_speed;
@@ -155,5 +179,5 @@ void Player::update() {
   this->cooldowns();
   this->get_status();
   this->animate();
-  // this->move(this->speed);
+  this->move(this->speed);
 }

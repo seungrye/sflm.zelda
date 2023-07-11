@@ -24,6 +24,8 @@ private:
   void get_status();
   void animate();
   void update_sprite(std::shared_ptr<SpriteTexture> sprite);
+  void collision(const std::string& direction);
+  void move(int speed);
 
 private:
   py::Rect hitbox;
