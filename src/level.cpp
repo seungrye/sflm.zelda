@@ -45,8 +45,7 @@ void Level::create_map() {
           auto tile = std::make_shared<Tile>(sf::Vector2u(x, y), "invisible");
           this->obstacle_sprites.push_back(tile);
         } else if (!style.compare("grass")) {
-          auto limit = graphics["grass"].size();
-          auto grass = graphics["grass"][random() % limit];
+          auto grass = this->random_choice(graphics["grass"]);
           auto tile = std::make_shared<Tile>(sf::Vector2u(x, y), "grass", *grass);
           this->visible_sprites.push_back(tile);
           this->obstacle_sprites.push_back(tile);
@@ -63,7 +62,7 @@ void Level::create_map() {
     }
   }
 
-  this->player = std::make_shared<Player>(sf::Vector2u(1500, 1500), this->obstacle_sprites);
+  this->player = std::make_shared<Player>(sf::Vector2u(1500, 1600), this->obstacle_sprites);
   this->visible_sprites.push_back(this->player);
 }
 void Level::create_attack() {}
@@ -89,9 +88,7 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player) {
   this->offset.y = player->rect().centery - this->half_height;
 
   // drawing the floor
-  auto floor_offset_pos = sf::Vector2f(this->floor.rect().left - this->offset.x,
-                                       this->floor.rect().top - this->offset.y);
-
+  auto floor_offset_pos = sf::Vector2f(this->floor.rect().left - this->offset.x, this->floor.rect().top - this->offset.y);
   this->floor.move(floor_offset_pos);
   GameWindow::instance().screen().draw(this->floor.surf());
 
@@ -101,8 +98,7 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player) {
             });
 
   for (auto &sprite : this->sprites) {
-    auto offset_rect = sf::Vector2f(sprite->rect().left - this->offset.x,
-                                    sprite->rect().top - this->offset.y);
+    auto offset_rect = sf::Vector2f(sprite->rect().left - this->offset.x, sprite->rect().top - this->offset.y);
     sprite->move(offset_rect);
     GameWindow::instance().screen().draw(sprite->surf());
   }

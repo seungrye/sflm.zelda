@@ -35,6 +35,10 @@ public:
   void run();
 
 private:
+  auto random_choice(const std::vector<std::shared_ptr<SpriteTexture>>& list) {
+    return list[random() % list.size()];
+  }
+private:
   YSortCameraGroup visible_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
   std::shared_ptr<Player> player;
