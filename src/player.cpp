@@ -234,12 +234,12 @@ void Player::animate()
 {
   auto animation = this->animations[this->status];
   this->frame_index += this->animation_speed;
-  if (this->frame_index > animation.size())
+  if (this->frame_index >= static_cast<float>(animation.size()))
   {
     this->frame_index = 0;
   }
 
-  this->update_sprite(animation[this->frame_index]);
+  this->update_sprite(animation[static_cast<int>(this->frame_index)]);
   this->get_rect({"center", this->hitbox_.center()});
 }
 void Player::update()
