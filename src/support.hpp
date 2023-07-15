@@ -21,10 +21,10 @@ public:
  
   void move(const sf::Vector2f &offset);
   const sf::IntRect &getTextureRect();
-  const py::Rect &get_rect(const std::pair<std::string, sf::Vector2u> &pos);
-  const py::Rect &rect();
+  const py::Rect<float> &get_rect(const std::pair<std::string, sf::Vector2f> &pos);
+  const py::Rect<float> &rect();
   const sf::Sprite &surf();
-  const py::Rect &hitbox();
+  const py::Rect<float> &hitbox();
   /**
    * @brief sprite 의 hitbox 와 충될되는 면적이 있는지 여부를 반환
    * 
@@ -32,7 +32,7 @@ public:
    * @return true 
    * @return false 
    */
-  bool colliderect(const py::Rect& rect, sf::Rect<int>& intersection) {
+  bool colliderect(const py::Rect<float>& rect, sf::Rect<float>& intersection) {
     return this->hitbox_.intersects(rect, intersection);
   }
 
@@ -41,8 +41,8 @@ public:
 
 protected:
   sf::Sprite sprite_;
-  py::Rect rect_;
-  py::Rect hitbox_;
+  py::Rect<float> rect_;
+  py::Rect<float> hitbox_;
 };
 
 std::vector<std::vector<std::string>> import_csv_layout(const std::string &filename);

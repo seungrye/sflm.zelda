@@ -8,11 +8,11 @@
 
 class Tile : public SpriteTexture {
 public:
-  Tile(const sf::Vector2u &pos, std::string sprite_type);
-  Tile(const sf::Vector2u &pos, std::string sprite_type, const SpriteTexture& sprite);
+  Tile(const sf::Vector2f &pos, std::string sprite_type);
+  Tile(const sf::Vector2f &pos, std::string sprite_type, const SpriteTexture& sprite);
 
 private:
-  void init(const sf::Vector2u &pos);
+  void init(const sf::Vector2f &pos);
 
 private:
   std::string sprite_type_;

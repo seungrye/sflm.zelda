@@ -10,7 +10,8 @@
 #include <memory>
 #include <vector>
 
-class YSortCameraGroup {
+class YSortCameraGroup
+{
 public:
   YSortCameraGroup();
   void custom_draw(std::shared_ptr<Player> player);
@@ -20,13 +21,14 @@ public:
 private:
   unsigned half_width;
   unsigned half_height;
-  sf::Vector2i offset;
+  sf::Vector2f offset;
 
   SpriteTexture floor;
   std::vector<std::shared_ptr<SpriteTexture>> sprites;
 };
 
-class Level {
+class Level
+{
 public:
   Level();
   void create_map();
@@ -35,12 +37,16 @@ public:
   void run();
 
 private:
-  auto random_choice(const std::vector<std::shared_ptr<SpriteTexture>>& list) {
+  auto random_choice(const std::vector<std::shared_ptr<SpriteTexture>> &list)
+  {
     return list[random() % list.size()];
   }
+
 private:
   YSortCameraGroup visible_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
+  std::vector<std::shared_ptr<SpriteTexture>> attackable_sprites;
+  std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
 };
 

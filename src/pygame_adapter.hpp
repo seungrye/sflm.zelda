@@ -45,42 +45,45 @@ namespace py
   typedef Vector2<unsigned int> Vector2u;
   typedef Vector2<float> Vector2f;
 
-  class Rect : public sf::IntRect
+  template <typename T>
+  class Rect : public sf::Rect<T>
   {
   public:
     Rect() {}
-    Rect(sf::IntRect &rect) : sf::IntRect(rect)
+    Rect(sf::Rect<T> &rect) : sf::Rect<T>(rect)
     {
-      centerx = left + (width / 2);
-      centery = top + (height / 2);
+      centerx = this->left + (this->width / 2);
+      centery = this->top + (this->height / 2);
     }
-    Rect(int rectLeft, int rectTop, int rectWidth, int rectHeight)
-        : sf::IntRect(rectLeft, rectTop, rectWidth, rectHeight)
+    Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight)
+        : sf::Rect<T>(rectLeft, rectTop, rectWidth, rectHeight)
     {
-      centerx = left + (width / 2);
-      centery = top + (height / 2);
+      centerx = this->left + (this->width / 2);
+      centery = this->top + (this->height / 2);
     }
-    py::Rect inflate(int x, int y)
+
+    py::Rect<T> inflate(T x, T y)
     {
-      return py::Rect(this->left, this->top, this->width + x, this->height + y);
+      return py::Rect<T>(this->left, this->top, this->width + x, this->height + y);
     }
-    const sf::Vector2u center() { return {this->centerx, this->centery}; }
+
+    const sf::Vector2<T> center() { return {this->centerx, this->centery}; }
 
     /**
      * @brief 현재 객체의 center 를 파라메터로 전달된 위치로 변경
      *
      * @param center
      */
-    void center(const sf::Vector2u &center)
+    void center(const sf::Vector2<T> &center)
     {
       this->centerx = center.x;
       this->centery = center.y;
 
-      this->left = center.x - (width / 2);
-      this->top = center.y - (height / 2);
+      this->left = center.x - (this->width / 2);
+      this->top = center.y - (this->height / 2);
     }
 
-    void transform(int x, int y)
+    void transform(T x, T y)
     {
       this->centerx += x;
       this->centery += y;
@@ -90,9 +93,13 @@ namespace py
     }
 
   public:
-    unsigned centerx;
-    unsigned centery;
+    T centerx;
+    T centery;
   };
+
+  typedef Rect<int> IntRect;
+  typedef Rect<float> FloatRect;
+
 } // namespace py
 
 #endif

@@ -3,17 +3,17 @@
 
 #include "pygame_adapter.hpp"
 #include "support.hpp"
+#include "entity.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <map>
 #include <memory>
 
-class Player : public SpriteTexture {
+class Player : public Entity {
 public:
-  Player() = default;
-  Player(const sf::Vector2u &pos,
-         std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites);
+  Player(const sf::Vector2f &pos,
+         const std::vector<std::shared_ptr<SpriteTexture>>& obstacle_sprites);
 
   void update();
 
@@ -24,19 +24,13 @@ private:
   void get_status();
   void animate();
   void update_sprite(std::shared_ptr<SpriteTexture> sprite);
-  void collision(const std::string& direction);
-  void move(int speed);
 
 private:
   std::string status;
-  float frame_index;
-  float animation_speed;
-  py::Vector2i direction;
   int speed;
   bool attacking;
   sf::Time attack_cooldown;
   sf::Clock attack_time;
-  std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
   // create_attack;
   // destroy_attack;
   int weapon_index;
