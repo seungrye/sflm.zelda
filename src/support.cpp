@@ -63,6 +63,8 @@ SpriteTexture::get_rect(const std::pair<std::string, sf::Vector2u> &pos) {
 
 const py::Rect &SpriteTexture::rect() { return this->rect_; }
 
+const py::Rect &SpriteTexture::hitbox() { return this->hitbox_; }
+
 std::vector<std::vector<std::string>>
 import_csv_layout(const std::string &filename) {
   auto terrain_map = std::vector<std::vector<std::string>>();

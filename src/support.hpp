@@ -24,6 +24,17 @@ public:
   const py::Rect &get_rect(const std::pair<std::string, sf::Vector2u> &pos);
   const py::Rect &rect();
   const sf::Sprite &surf();
+  const py::Rect &hitbox();
+  /**
+   * @brief sprite 의 hitbox 와 충될되는 면적이 있는지 여부를 반환
+   * 
+   * @param rect 대상 면적
+   * @return true 
+   * @return false 
+   */
+  bool colliderect(const py::Rect& rect, sf::Rect<int>& intersection) {
+    return this->hitbox_.intersects(rect, intersection);
+  }
 
 public:
   std::shared_ptr<sf::Texture> texture_; //! 필수
@@ -31,6 +42,7 @@ public:
 protected:
   sf::Sprite sprite_;
   py::Rect rect_;
+  py::Rect hitbox_;
 };
 
 std::vector<std::vector<std::string>> import_csv_layout(const std::string &filename);

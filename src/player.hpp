@@ -27,8 +27,8 @@ private:
   void collision(const std::string& direction);
   void move(int speed);
 
-private:
-  py::Rect hitbox;
+// private:
+//   py::Rect hitbox;
 
 private:
   std::string status;

@@ -16,7 +16,6 @@ private:
 
 private:
   std::string sprite_type_;
-  py::Rect hitbox_;
 };
 
 #endif /* __TILE_HPP__ */

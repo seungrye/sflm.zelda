@@ -17,4 +17,5 @@ void Tile::init(const sf::Vector2u &pos) {
   } else {
     this->get_rect({"topleft", pos});
   }
+  this->hitbox_ = this->rect_.inflate(0, -10);
 }

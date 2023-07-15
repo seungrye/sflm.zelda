@@ -62,7 +62,7 @@ void Level::create_map() {
     }
   }
 
-  this->player = std::make_shared<Player>(sf::Vector2u(1500, 1600), this->obstacle_sprites);
+  this->player = std::make_shared<Player>(sf::Vector2u(2270, 1600), this->obstacle_sprites);
   this->visible_sprites.push_back(this->player);
 }
 void Level::create_attack() {}
@@ -97,10 +97,32 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player) {
               return a->rect().centery < b->rect().centery;
             });
 
-  for (auto &sprite : this->sprites) {
+  for (const auto &sprite : this->sprites) {
     auto offset_rect = sf::Vector2f(sprite->rect().left - this->offset.x, sprite->rect().top - this->offset.y);
     sprite->move(offset_rect);
     GameWindow::instance().screen().draw(sprite->surf());
+
+    // draw hitbox (for debugging)
+    while(false) {
+      sf::RectangleShape rectangle;
+      rectangle.setSize(sf::Vector2f(sprite->rect().getSize()));
+      rectangle.setOutlineColor(sf::Color::Blue);
+      rectangle.setOutlineThickness(5);
+      rectangle.setFillColor(sf::Color::Transparent);
+      rectangle.setPosition(sf::Vector2f(sprite->rect().getPosition()));
+      rectangle.setOrigin(-floor_offset_pos);
+
+      sf::RectangleShape hitbox;
+      hitbox.setSize(sf::Vector2f(sprite->hitbox().getSize()));
+      hitbox.setOutlineColor(sf::Color::Red);
+      hitbox.setOutlineThickness(3);
+      hitbox.setFillColor(sf::Color::Transparent);
+      hitbox.setPosition(sf::Vector2f(sprite->hitbox().getPosition()));
+      hitbox.setOrigin(-floor_offset_pos);
+
+      GameWindow::instance().screen().draw(rectangle);
+      GameWindow::instance().screen().draw(hitbox);
+    }
   }
 
   GameWindow::instance().screen().display();
