@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Audio/Music.hpp>
 #include <cassert>
 #include <climits>
 #include <unistd.h>
@@ -15,6 +16,13 @@ public:
     sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "sfmlZelda");
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(FPS);
+
+    // sound
+    sf::Music music;
+    auto r = music.openFromFile("./src/audio/main.ogg");
+    assert(r);
+    music.setLoop(true);
+    music.play();
 
     while (window.isOpen()) {
       sf::Event event;
