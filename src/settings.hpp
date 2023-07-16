@@ -33,14 +33,6 @@ const auto BAR_COLOR = sf::Color(0xee, 0xee, 0xee);
 const auto BAR_COLOR_SELECTED = sf::Color(0x11, 0x11, 0x11);
 const auto UPGRADE_BG_COLOR_SELECTED = sf::Color(0xee, 0xee, 0xee);
 
-struct WeaponData {
-  int cooldown;
-  int damage;
-  std::string graphic;
-};
-
-extern std::map<std::string, WeaponData> WEAPON_DATA;
-
 template<typename T>
 const std::string& nth_name(const std::map<std::string, T> map, int nth) {
     auto index = 0;
@@ -54,13 +46,21 @@ const std::string& nth_name(const std::map<std::string, T> map, int nth) {
     assert(false);
 }
 
+struct WeaponData {
+  int cooldown;
+  int damage;
+  std::string graphic;
+};
+
+extern std::map<std::string, WeaponData> WEAPON_DATA;
+
 struct MagicData {
   int strength;
   int cost;
   std::string graphic;
 };
 
-extern std::vector<std::pair<std::string, MagicData>> MAGIC_DATA;
+extern std::map<std::string, MagicData> MAGIC_DATA;
 
 struct MonsterData {
   int health;
@@ -74,6 +74,6 @@ struct MonsterData {
   int notice_radius;
 };
 
-extern std::vector<std::pair<std::string, MonsterData>> MONSTER_DATA;
+extern std::map<std::string, MonsterData> MONSTER_DATA;
 
 #endif

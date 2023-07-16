@@ -17,7 +17,7 @@ Player::Player(const sf::Vector2f &pos,
                const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
     : status("down"), Entity(0, 0.15f, {0, 0}, obstacle_sprites), speed(5),
       attacking(false), attack_cooldown(sf::milliseconds(400)),
-      weapon_index(0), magic_index(0), magic(MAGIC_DATA[magic_index].first),
+      weapon_index(0), magic_index(0),
       can_switch_weapon(true),
       switch_duration_cooldown(sf::milliseconds(200)),
       can_switch_magic(true),
@@ -28,7 +28,8 @@ Player::Player(const sf::Vector2f &pos,
   this->get_rect({"topleft", pos});
   this->hitbox_ = this->rect_.inflate(0, -26);
 
-  this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index);
+  this->weapon = nth_name(WEAPON_DATA, this->weapon_index);
+  this->magic = nth_name(MAGIC_DATA, this->magic_index);
 
   this->import_player_assets();
   // this->create_attack = ;
@@ -126,7 +127,7 @@ void Player::input()
     {
       this->magic_index = 0;
     }
-    this->magic = MAGIC_DATA[this->magic_index].first;
+    this->magic = nth_name(MAGIC_DATA, this->magic_index);
   }
 }
 

@@ -11,42 +11,19 @@ std::map<std::string, int> HITBOX_OFFSET = {
 };
 
 std::map<std::string, WeaponData> WEAPON_DATA = {
-    {"sword", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/sword/full.png"}},
-    {"axe", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/axe/full.png"}},
-    {"lance", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/lance/full.png"}},
-    {"rapier", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/rapier/full.png"}},
-    {"sai", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/sai/full.png"}}
-};
+    {"sword", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/sword/full.png"}},
+    {"axe", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/axe/full.png"}},
+    {"lance", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/lance/full.png"}},
+    {"rapier", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/rapier/full.png"}},
+    {"sai", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/sai/full.png"}}};
 
-inline std::pair<std::string, MagicData> MG(const std::string &NAME, int STRENGTH, int COST, const std::string &GRAPHIC)
-{
-    return std::make_pair(
-        NAME,
-        MagicData{.strength = STRENGTH, .cost = COST, .graphic = GRAPHIC});
-}
-
-std::vector<std::pair<std::string, MagicData>> MAGIC_DATA = {
-    MG("flame", 5, 20, "./graphics/particles/flame/fire.png"),
-    MG("heal", 5, 10, "./graphics/particles/heal/heal.png")};
-
-inline std::pair<std::string, MonsterData> MON(const std::string &NAME,
-                                               int HEALTH,
-                                               int EXP,
-                                               int DAMAGE,
-                                               const std::string &ATTACK_TYPE,
-                                               const std::string &ATTACK_SOUND,
-                                               int SPEED,
-                                               int RESISTANCE,
-                                               int ATTACK_RADIUS,
-                                               int NOTICE_RADIUS)
-{
-    return std::make_pair(
-        NAME, MonsterData{.health = HEALTH, .exp = EXP, .damage = DAMAGE, .attack_type = ATTACK_TYPE, .attack_sound = ATTACK_SOUND, .speed = SPEED, .resistance = RESISTANCE, .attack_radius = ATTACK_RADIUS, .notice_radius = NOTICE_RADIUS});
-}
+std::map<std::string, MagicData> MAGIC_DATA = {
+    {"flame", MagicData{.strength = 5, .cost = 20, .graphic = "./graphics/particles/flame/fire.png"}},
+    {"heal", MagicData{.strength = 5, .cost = 10, .graphic = "./graphics/particles/heal/heal.png"}}};
 
 // Note. resistance 는 사용자가 공격시 적이 밀려나는 정도를 의미함
-std::vector<std::pair<std::string, MonsterData>> MONSTER_DATA = {
-    MON("squid", 100, 100, 20, "slash", "./audio/attack/slash.wav", 3, 3, 80, 360),
-    MON("raccoon", 300, 250, 40, "claw", "./audio/attack/claw.wav", 2, 3, 120, 400),
-    MON("spirit", 100, 110, 8, "thunder", "./audio/attack/fireball.wav", 4, 3, 60, 350),
-    MON("bamboo", 70, 120, 6, "leaf_attack", "./audio/attack/slash.wav", 3, 3, 50, 300)};
+std::map<std::string, MonsterData> MONSTER_DATA = {
+    {"squid", MonsterData{.health = 100, .exp = 100, .damage = 20, .attack_type = "slash", .attack_sound = "./audio/attack/slash.wav", .speed = 3, .resistance = 3, .attack_radius = 80, .notice_radius = 360}},
+    {"raccoon", MonsterData{.health = 300, .exp = 250, .damage = 40, .attack_type = "claw", .attack_sound = "./audio/attack/claw.wav", .speed = 2, .resistance = 3, .attack_radius = 120, .notice_radius = 400}},
+    {"spirit", MonsterData{.health = 100, .exp = 110, .damage = 8, .attack_type = "thunder", .attack_sound = "./audio/attack/fireball.wav", .speed = 4, .resistance = 3, .attack_radius = 60, .notice_radius = 350}},
+    {"bamboo", MonsterData{.health = 70, .exp = 120, .damage = 6, .attack_type = "leaf_attack", .attack_sound = "./audio/attack/slash.wav", .speed = 3, .resistance = 3, .attack_radius = 50, .notice_radius = 300}}};
