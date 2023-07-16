@@ -163,7 +163,7 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
 
   // drawing the floor
   auto floor_offset_pos = sf::Vector2f(this->floor.rect().left - this->offset.x, this->floor.rect().top - this->offset.y);
-  this->floor.move(floor_offset_pos);
+  this->floor.set_origin(floor_offset_pos);
   GameWindow::instance().screen().draw(this->floor.surf());
 
   std::sort(std::begin(this->sprites), std::end(this->sprites),
@@ -175,7 +175,7 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   for (const auto &sprite : this->sprites)
   {
     auto offset_rect = sf::Vector2f(sprite->rect().left - this->offset.x, sprite->rect().top - this->offset.y);
-    sprite->move(offset_rect);
+    sprite->set_origin(offset_rect);
     GameWindow::instance().screen().draw(sprite->surf());
 
     // draw hitbox (for debugging)

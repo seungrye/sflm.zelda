@@ -46,7 +46,7 @@ const sf::IntRect &SpriteTexture::getTextureRect()
   return this->sprite_.getTextureRect();
 }
 
-void SpriteTexture::move(const sf::Vector2f &offset)
+void SpriteTexture::set_origin(const sf::Vector2f &offset)
 {
   this->sprite_.setOrigin(-offset);
 }

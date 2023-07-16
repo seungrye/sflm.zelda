@@ -19,8 +19,13 @@ public:
 
   bool loadFromFile(const std::string &filename, const sf::IntRect &area = sf::IntRect());
  
-  void move(const sf::Vector2f &offset);
-  const sf::IntRect &getTextureRect();
+  void set_origin(const sf::Vector2f &offset);
+  void set_position(const std::pair<std::string, sf::Vector2f> &pos) {
+    if (!pos.first.compare("center")) {
+      this->get_rect(pos);
+    }
+    this->sprite_.setPosition({this->rect_.left, this->rect_.top});
+  }
   const py::Rect<float> &get_rect(const std::pair<std::string, sf::Vector2f> &pos);
   const py::Rect<float> &rect();
   const sf::Sprite &surf();
@@ -48,6 +53,9 @@ public:
   bool is(std::string sprite_type) {
     return !this->sprite_type_.compare(sprite_type);
   }
+
+private:
+  const sf::IntRect &getTextureRect();
 
 public:
   std::shared_ptr<sf::Texture> texture_; //! 필수

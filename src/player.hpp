@@ -27,6 +27,11 @@ public:
   const int health() { return this->health_; }
   const int energy() { return this->energy_; }
   const Stats& stats() { return this->stats_; }
+  const int exp() { return this->exp_; }
+  const int weapon_index() { return this->weapon_index_; }
+  const int magic_index() { return this->magic_index_; }
+  const bool can_switch_weapon() { return this->can_switch_weapon_; }
+  const bool can_switch_magic() { return this->can_switch_magic_; }
 
 private:
   void import_player_assets();
@@ -52,15 +57,15 @@ private:
   sf::Clock attack_time;
   // create_attack;
   // destroy_attack;
-  int weapon_index;
+  int weapon_index_;
   std::string weapon;
-  bool can_switch_weapon;
+  bool can_switch_weapon_;
   sf::Clock weapon_switch_time;
   sf::Time switch_duration_cooldown;
 
-  int magic_index;
+  int magic_index_;
   std::string magic;
-  bool can_switch_magic;
+  bool can_switch_magic_;
 
   bool vulernable;
   sf::Clock hurt_time;
@@ -73,7 +78,7 @@ private:
   Stats upgrade_cost;
   int health_;
   int energy_;
-  int exp;
+  int exp_;
 
   // weapon_attacks_sound
 };

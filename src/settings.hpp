@@ -17,7 +17,7 @@ const int BAR_HEIGHT = 20;
 const int HEALTH_BAR_WIDTH = 200;
 const int ENERGY_BAR_WIDTH = 140;
 const int ITEM_BOX_SIZE = 80;
-const std::string UI_FONT = "./graphics/font/joystix.ttf";
+const std::string UI_FONT = "./src/graphics/font/joystix.ttf";
 const int UI_FONT_SIZE = 18;
 
 const auto WATER_COLOR = sf::Color(0x71, 0xdd, 0xee);

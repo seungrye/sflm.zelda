@@ -64,7 +64,7 @@ namespace py
   {
   public:
     Rect() {}
-    Rect(sf::Rect<T> &rect) : sf::Rect<T>(rect)
+    Rect(const sf::Rect<T> &rect) : sf::Rect<T>(rect)
     {
       centerx = this->left + (this->width / 2);
       centery = this->top + (this->height / 2);

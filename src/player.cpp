@@ -17,10 +17,10 @@ Player::Player(const sf::Vector2f &pos,
                const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
     : status("down"), Entity(0, 0.15f, {0, 0}, obstacle_sprites), speed(5),
       attacking(false), attack_cooldown(sf::milliseconds(400)),
-      weapon_index(0), magic_index(0),
-      can_switch_weapon(true),
+      weapon_index_(0), magic_index_(0),
+      can_switch_weapon_(true),
       switch_duration_cooldown(sf::milliseconds(200)),
-      can_switch_magic(true),
+      can_switch_magic_(true),
       vulernable(true), invincibility_duration(sf::milliseconds(300))
 {
   auto r = this->loadFromFile("./src/graphics/player.png");
@@ -28,8 +28,8 @@ Player::Player(const sf::Vector2f &pos,
   this->get_rect({"topleft", pos});
   this->hitbox_ = this->rect_.inflate(0, -26);
 
-  this->weapon = nth_name(WEAPON_DATA, this->weapon_index);
-  this->magic = nth_name(MAGIC_DATA, this->magic_index);
+  this->weapon = nth_name(WEAPON_DATA, this->weapon_index_);
+  this->magic = nth_name(MAGIC_DATA, this->magic_index_);
 
   this->import_player_assets();
   // this->create_attack = ;
@@ -40,7 +40,7 @@ Player::Player(const sf::Vector2f &pos,
   this->upgrade_cost = {.health = 100, .energy = 100, .attack = 100, .magic = 100, .speed = 100};
   this->health_ = this->stats_.health;
   this->energy_ = this->stats_.energy;
-  this->exp = 0;
+  this->exp_ = 0;
 }
 
 void Player::import_player_assets()
@@ -105,29 +105,29 @@ void Player::input()
   }
 
   // swap weapon
-  if (this->can_switch_weapon &&
+  if (this->can_switch_weapon_ &&
       sf::Keyboard::isKeyPressed(sf::Keyboard::Tab))
   {
-    this->can_switch_weapon = false;
+    this->can_switch_weapon_ = false;
     this->weapon_switch_time.restart();
-    this->weapon_index++;
-    if (this->weapon_index >= WEAPON_DATA.size())
+    this->weapon_index_++;
+    if (this->weapon_index_ >= WEAPON_DATA.size())
     {
-      this->weapon_index = 0;
+      this->weapon_index_ = 0;
     }
-    this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index);
+    this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index_);
   }
 
   // swap magic
-  if (this->can_switch_magic && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+  if (this->can_switch_magic_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
   {
-    this->can_switch_magic = false;
-    this->magic_index++;
-    if (this->magic_index >= MAGIC_DATA.size())
+    this->can_switch_magic_ = false;
+    this->magic_index_++;
+    if (this->magic_index_ >= MAGIC_DATA.size())
     {
-      this->magic_index = 0;
+      this->magic_index_ = 0;
     }
-    this->magic = nth_name(MAGIC_DATA, this->magic_index);
+    this->magic = nth_name(MAGIC_DATA, this->magic_index_);
   }
 }
 
@@ -142,11 +142,11 @@ void Player::cooldowns()
     }
   }
 
-  if (!this->can_switch_weapon)
+  if (!this->can_switch_weapon_)
   {
     if (this->weapon_switch_time.getElapsedTime() > this->switch_duration_cooldown)
     {
-      this->can_switch_weapon = true;
+      this->can_switch_weapon_ = true;
     }
   }
 

@@ -11,15 +11,15 @@ std::map<std::string, int> HITBOX_OFFSET = {
 };
 
 std::map<std::string, WeaponData> WEAPON_DATA = {
-    {"sword", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/sword/full.png"}},
-    {"axe", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/axe/full.png"}},
-    {"lance", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/lance/full.png"}},
-    {"rapier", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/rapier/full.png"}},
-    {"sai", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./graphics/weapons/sai/full.png"}}};
+    {"sword", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./src/graphics/weapons/sword/full.png"}},
+    {"axe", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./src/graphics/weapons/axe/full.png"}},
+    {"lance", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./src/graphics/weapons/lance/full.png"}},
+    {"rapier", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./src/graphics/weapons/rapier/full.png"}},
+    {"sai", WeaponData{.cooldown = 100, .damage = 15, .graphic = "./src/graphics/weapons/sai/full.png"}}};
 
 std::map<std::string, MagicData> MAGIC_DATA = {
-    {"flame", MagicData{.strength = 5, .cost = 20, .graphic = "./graphics/particles/flame/fire.png"}},
-    {"heal", MagicData{.strength = 5, .cost = 10, .graphic = "./graphics/particles/heal/heal.png"}}};
+    {"flame", MagicData{.strength = 5, .cost = 20, .graphic = "./src/graphics/particles/flame/fire.png"}},
+    {"heal", MagicData{.strength = 5, .cost = 10, .graphic = "./src/graphics/particles/heal/heal.png"}}};
 
 // Note. resistance 는 사용자가 공격시 적이 밀려나는 정도를 의미함
 std::map<std::string, MonsterData> MONSTER_DATA = {
