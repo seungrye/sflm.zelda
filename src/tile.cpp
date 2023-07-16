@@ -1,15 +1,17 @@
 #include "tile.hpp"
 
 Tile::Tile(const sf::Vector2f &pos, std::string sprite_type)
-    : SpriteTexture(TILESIZE, TILESIZE), sprite_type_(sprite_type)
+    : SpriteTexture(TILESIZE, TILESIZE)
 {
+  this->sprite_type_ = sprite_type;
   this->init(pos);
 }
 
 Tile::Tile(const sf::Vector2f &pos, std::string sprite_type,
            const SpriteTexture &sprite)
-    : SpriteTexture(sprite), sprite_type_(sprite_type)
+    : SpriteTexture(sprite)
 {
+  this->sprite_type_ = sprite_type;
   this->init(pos);
 }
 

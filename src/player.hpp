@@ -15,7 +15,7 @@ public:
   Player(const sf::Vector2f &pos,
          const std::vector<std::shared_ptr<SpriteTexture>>& obstacle_sprites);
 
-  void update();
+  void update() override;
 
 private:
   void import_player_assets();

@@ -4,6 +4,7 @@
 #include "pygame_adapter.hpp"
 #include "support.hpp"
 #include "entity.hpp"
+#include "player.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -45,16 +46,55 @@ public:
         }
     }
 
-    void update()
+    void update() override
     {
         // this->hit_reaction();
-        // this->move(this->speed);
+        this->move(this->speed);
         this->animate();
         // this->cooldowns();
         // this->check_death();
     }
 
+    void enemy_update(std::shared_ptr<Player> player) {
+        this->get_status(player);
+        this->actions(player);
+    }
+
 private:
+    void actions(std::shared_ptr<Player> player) {
+        if (!this->status.compare("attack")) {
+            // this->attack_sound.play();
+            // this->attack_time = ;
+            // player->damage_player(this->damage, this->attack_type);
+        } else if (!this->status.compare("move")) {
+            this->direction = this->get_player_distance_direction(player).second;
+        } else {
+            this->direction = py::Vector2f(0, 0);
+        }
+    }
+
+    std::pair<float,py::Vector2f> get_player_distance_direction(std::shared_ptr<Player> player) {
+        auto enemy_vec = py::Vector2f(this->rect_.center());
+        auto player_rect = player->rect();
+        auto player_vec = py::Vector2f(player_rect.center());
+        auto distance = enemy_vec.distance_to(player_vec);
+        auto direction = (distance > 0) ? py::Vector2f(player_vec - enemy_vec).normalize() : py::Vector2f(0, 0);
+        return {distance, direction};
+    }
+    void get_status(std::shared_ptr<Player> player) {
+        auto distance = this->get_player_distance_direction(player).first;
+        if (this->can_attack && distance < this->attack_radius) {
+            if (this->status.compare("attack")) {
+                this->frame_index = 0;
+            }
+            this->status = "attack";
+        } else if (distance < this->notice_radius) {
+            this->status = "move";
+        } else {
+            this->status = "idle";
+        }
+    }
+
     void update_sprite(std::shared_ptr<SpriteTexture> sprite)
     {
         this->texture_ = sprite->texture_; // 이걸 public 이 아닌 protected 로 바꿀수가 없을까?
@@ -63,16 +103,14 @@ private:
     }
 
 private:
-    std::string sprite_type;
     std::string status;
     // image
     std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> animations;
     std::string monster_name;
-    // monster_info
     int health;
     int exp;
     int damage;
-    int attack_type;
+    std::string attack_type;
     float speed;
     int resistance;
     int attack_radius;
@@ -85,7 +123,8 @@ private:
     sf::Time invincibility_duration;
     // death_sound
     // hit_sound
-    // attack_sound
+    // attack_sound;
+
 };
 
 #endif /* __ENEMY_HPP__ */

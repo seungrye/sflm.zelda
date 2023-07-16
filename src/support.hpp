@@ -36,6 +36,19 @@ public:
     return this->hitbox_.intersects(rect, intersection);
   }
 
+  virtual void update() {}
+
+  /**
+   * @brief 특정 타입의 sprite 인지 체크
+   * 
+   * @param sprite_type 
+   * @return true 파라메터로 전달된 타입과 매칭될 경우
+   * @return false 파라메터로 전달된 타입과 매칭되지 않을 경우
+   */
+  bool is(std::string sprite_type) {
+    return !this->sprite_type_.compare(sprite_type);
+  }
+
 public:
   std::shared_ptr<sf::Texture> texture_; //! 필수
 
@@ -43,6 +56,7 @@ protected:
   sf::Sprite sprite_;
   py::Rect<float> rect_;
   py::Rect<float> hitbox_;
+  std::string sprite_type_;
 };
 
 std::vector<std::vector<std::string>> import_csv_layout(const std::string &filename);

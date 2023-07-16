@@ -9,6 +9,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <vector>
+#include "enemy.hpp"
 
 class YSortCameraGroup
 {
@@ -16,6 +17,14 @@ public:
   YSortCameraGroup();
   void custom_draw(std::shared_ptr<Player> player);
   void update();
+  void enemy_update(std::shared_ptr<Player> player) {
+    for(const auto& sprite: this->sprites) {
+      if (sprite->is("enemy")) {
+        auto enemy = std::dynamic_pointer_cast<Enemy>(sprite);
+        enemy->enemy_update(player);
+      }
+    }
+  }
   void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
 
 private:
@@ -48,6 +57,8 @@ private:
   std::vector<std::shared_ptr<SpriteTexture>> attackable_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
+
+  bool game_paused;
 };
 
 #endif

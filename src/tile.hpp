@@ -13,9 +13,6 @@ public:
 
 private:
   void init(const sf::Vector2f &pos);
-
-private:
-  std::string sprite_type_;
 };
 
 #endif /* __TILE_HPP__ */

@@ -15,10 +15,11 @@
 #include <memory>
 #include <iostream>
 
-Level::Level()
+Level::Level() : game_paused(false)
 {
   this->create_map();
 }
+
 void Level::create_map()
 {
   std::map<std::string, std::vector<std::vector<std::string>>> layouts = {
@@ -120,7 +121,14 @@ void Level::destroy_attack() {}
 void Level::run()
 {
   visible_sprites.custom_draw(player);
-  this->player->update();
+
+  if (this->game_paused) {
+    // this->upgrade.display();
+  } else {
+    visible_sprites.update();
+    visible_sprites.enemy_update(this->player);
+    // this->player_attack_logic();
+  }
 }
 
 YSortCameraGroup::YSortCameraGroup()
@@ -184,4 +192,8 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   GameWindow::instance().screen().display();
 }
 
-void YSortCameraGroup::update() {}
+void YSortCameraGroup::update() {
+  for(const auto& sprite: this->sprites) {
+    sprite->update();
+  }
+}
