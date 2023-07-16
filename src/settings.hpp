@@ -32,6 +32,14 @@ struct WeaponData {
 
 extern std::vector<std::pair<std::string, WeaponData>> WEAPON_DATA;
 
+struct MagicData {
+  int strength;
+  int cost;
+  std::string graphic;
+};
+
+extern std::vector<std::pair<std::string, MagicData>> MAGIC_DATA;
+
 struct MonsterData {
   int health;
   int exp;

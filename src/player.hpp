@@ -10,6 +10,14 @@
 #include <map>
 #include <memory>
 
+struct Stats {
+  int health;
+  int energy;
+  int attack;
+  int magic;
+  int speed;
+};
+
 class Player : public Entity {
 public:
   Player(const sf::Vector2f &pos,
@@ -39,7 +47,24 @@ private:
   sf::Clock weapon_switch_time;
   sf::Time switch_duration_cooldown;
 
+  int magic_index;
+  std::string magic;
+  bool can_switch_magic;
+  
+  bool vulernable;
+  sf::Clock hurt_time;
+  sf::Time invincibility_duration;
+
   std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> animations;
+
+  Stats stats;
+  Stats max_stats;
+  Stats upgrade_cost;
+  int health;
+  int energy;
+  int exp;
+
+  // weapon_attacks_sound
 };
 
 #endif
