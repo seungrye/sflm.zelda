@@ -29,12 +29,14 @@ public:
         }
       }
 
+      sf::RenderTexture& renderTexture = GameWindow::instance().screen();
+      renderTexture.clear(WATER_COLOR);
+
       // 게임 로직을 여기에서 업데이트합니다.
       level.run();
 
       // (off-screen render 된 texture 를) 화면에 출력 합니다.
-      window.clear();
-      const sf::Texture &texture = GameWindow::instance().screen().getTexture();
+      const sf::Texture &texture = renderTexture.getTexture();
       sf::Sprite sprite(texture);
       window.draw(sprite);
       window.display();

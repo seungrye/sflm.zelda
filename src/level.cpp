@@ -63,6 +63,7 @@ void Level::create_map()
           auto tile = std::make_shared<Tile>(sf::Vector2f(x, y), "grass", *grass);
           this->visible_sprites.push_back(tile);
           this->obstacle_sprites.push_back(tile);
+          this->attackable_sprites.push_back(tile);
         }
         else if (!style.compare("object"))
         {
@@ -70,14 +71,19 @@ void Level::create_map()
           auto tile = std::make_shared<Tile>(sf::Vector2f(x, y), "object", *sprite);
           this->visible_sprites.push_back(tile);
           this->obstacle_sprites.push_back(tile);
-          this->attackable_sprites.push_back(tile);
         }
         else if (!style.compare("entities"))
         {
           if (!col.compare("394"))
           {
             this->player = std::make_shared<Player>(sf::Vector2f(x, y), this->obstacle_sprites);
-            this->visible_sprites.push_back(this->player);
+            this->visible_sprites.push_back(this->player
+            // create_attack
+            // destroy_attack
+            // create_magic
+            // destroy_magic
+            // damage_player
+            );
           }
           else
           {
@@ -91,11 +97,14 @@ void Level::create_map()
                 return "raccoon";
               if (!col.compare("393"))
                 return "squid";
-              return "";
+              assert(false);
             }();
             if (!monster_name.empty())
             {
-              auto enemy = std::make_shared<Enemy>(monster_name, sf::Vector2f(x, y), this->obstacle_sprites);
+              auto enemy = std::make_shared<Enemy>(monster_name, sf::Vector2f(x, y), this->obstacle_sprites
+              // trigger_death_particles
+              // add_xp
+              );
               this->visible_sprites.push_back(enemy);
               this->attackable_sprites.push_back(enemy);
             }
@@ -120,13 +129,17 @@ void Level::create_attack() {}
 void Level::destroy_attack() {}
 void Level::run()
 {
-  visible_sprites.custom_draw(player);
+  this->visible_sprites.custom_draw(player);
+  this->ui.display(this->player);
 
-  if (this->game_paused) {
+  if (this->game_paused)
+  {
     // this->upgrade.display();
-  } else {
-    visible_sprites.update();
-    visible_sprites.enemy_update(this->player);
+  }
+  else
+  {
+    this->visible_sprites.update();
+    this->visible_sprites.enemy_update(this->player);
     // this->player_attack_logic();
   }
 }
@@ -192,8 +205,10 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   GameWindow::instance().screen().display();
 }
 
-void YSortCameraGroup::update() {
-  for(const auto& sprite: this->sprites) {
+void YSortCameraGroup::update()
+{
+  for (const auto &sprite : this->sprites)
+  {
     sprite->update();
   }
 }

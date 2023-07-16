@@ -24,6 +24,9 @@ public:
          const std::vector<std::shared_ptr<SpriteTexture>>& obstacle_sprites);
 
   void update() override;
+  const int health() { return this->health_; }
+  const int energy() { return this->energy_; }
+  const Stats& stats() { return this->stats_; }
 
 private:
   void import_player_assets();
@@ -34,10 +37,10 @@ private:
   void update_sprite(std::shared_ptr<SpriteTexture> sprite);
 
   void energy_recovery() {
-    if (this->energy <= this->stats.energy) {
-      this->energy += 0.01 * this->stats.magic;
+    if (this->energy_ <= this->stats_.energy) {
+      this->energy_ += 0.01 * this->stats_.magic;
     } else {
-      this->energy = this->stats.energy;
+      this->energy_ = this->stats_.energy;
     }
   }
 
@@ -65,11 +68,11 @@ private:
 
   std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> animations;
 
-  Stats stats;
+  Stats stats_;
   Stats max_stats;
   Stats upgrade_cost;
-  int health;
-  int energy;
+  int health_;
+  int energy_;
   int exp;
 
   // weapon_attacks_sound

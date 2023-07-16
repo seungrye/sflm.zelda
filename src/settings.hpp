@@ -25,6 +25,14 @@ const auto UI_BG_COLOR = sf::Color(0x22, 0x22, 0x22);
 const auto UI_BORDER_COLOR = sf::Color(0x11, 0x11, 0x11);
 const auto TEXT_COLOR = sf::Color(0xee, 0xee, 0xee);
 
+const auto HEALTH_COLOR = sf::Color::Red;
+const auto ENERGY_COLOR = sf::Color::Blue;
+const auto UI_BORDER_COLOR_ACTIVE = sf::Color::Yellow;
+const auto TEXT_COLOR_SELECTED = sf::Color(0x11, 0x11, 0x11);
+const auto BAR_COLOR = sf::Color(0xee, 0xee, 0xee);
+const auto BAR_COLOR_SELECTED = sf::Color(0x11, 0x11, 0x11);
+const auto UPGRADE_BG_COLOR_SELECTED = sf::Color(0xee, 0xee, 0xee);
+
 struct WeaponData {
   int cooldown;
   int damage;

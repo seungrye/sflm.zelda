@@ -34,11 +34,11 @@ Player::Player(const sf::Vector2f &pos,
   // this->create_attack = ;
   // this->destroy_attack = ;
 
-  this->stats = {.health = 100, .energy = 60, .attack = 10, .magic = 4, .speed = 6};
+  this->stats_ = {.health = 100, .energy = 60, .attack = 10, .magic = 4, .speed = 6};
   this->max_stats = {.health = 300, .energy = 140, .attack = 20, .magic = 10, .speed = 12};
   this->upgrade_cost = {.health = 100, .energy = 100, .attack = 100, .magic = 100, .speed = 100};
-  this->health = this->stats.health;
-  this->energy = this->stats.energy;
+  this->health_ = this->stats_.health;
+  this->energy_ = this->stats_.energy;
   this->exp = 0;
 }
 
@@ -233,6 +233,6 @@ void Player::update()
   this->cooldowns();
   this->get_status();
   this->animate();
-  this->move(this->stats.speed);
+  this->move(this->stats_.speed);
   this->energy_recovery();
 }

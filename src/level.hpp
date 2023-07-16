@@ -5,12 +5,13 @@
 #include "player.hpp"
 #include "pygame_adapter.hpp"
 #include "support.hpp"
+#include "enemy.hpp"
+#include "ui.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <vector>
 #include <iostream>
-#include "enemy.hpp"
 
 class YSortCameraGroup
 {
@@ -63,7 +64,7 @@ private:
   std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
   // std::shared_ptr<Weapon> current_attack;
-  // std::shared_ptr<UI> ui;
+  UI ui;
   // std::shared_ptr<Upgrade> upgrade;
   // std::shared_ptr<AnimationPlayer> animation_player;
   // std::shared_ptr<MagicPlayer> magic_player;
