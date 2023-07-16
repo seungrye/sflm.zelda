@@ -4,13 +4,14 @@
 #include <string>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <cassert>
 
 const int WIDTH = 1024;
 const int HEIGHT = 768;
 const int TILESIZE = 64;
 const int FPS = 60;
 
-extern std::vector<std::pair<std::string, int>> HITBOX_OFFSET;
+extern std::map<std::string, int> HITBOX_OFFSET;
 
 const int BAR_HEIGHT = 20;
 const int HEALTH_BAR_WIDTH = 200;
@@ -30,7 +31,20 @@ struct WeaponData {
   std::string graphic;
 };
 
-extern std::vector<std::pair<std::string, WeaponData>> WEAPON_DATA;
+extern std::map<std::string, WeaponData> WEAPON_DATA;
+
+template<typename T>
+const std::string& nth_name(const std::map<std::string, T> map, int nth) {
+    auto index = 0;
+
+    for (const auto &item : map)
+    {
+      if (index == nth) return item.first;
+      index++;
+    }
+
+    assert(false);
+}
 
 struct MagicData {
   int strength;

@@ -22,6 +22,11 @@ public:
         if (event.type == sf::Event::Closed) {
           return window.close();
         }
+        if (event.type == sf::Event::KeyReleased) {
+          if (event.key.code == sf::Keyboard::M) {
+            this->level.toggle_menu();
+          }
+        }
       }
 
       // 게임 로직을 여기에서 업데이트합니다.

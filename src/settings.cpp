@@ -1,28 +1,22 @@
 #include "settings.hpp"
 #include <string>
 #include <vector>
+#include <cassert>
 
-std::vector<std::pair<std::string, int>> HITBOX_OFFSET = {
+std::map<std::string, int> HITBOX_OFFSET = {
     {"player", -26},
     {"object", -40},
     {"grass", -10},
     {"invisible", 0},
 };
 
-inline std::pair<std::string, WeaponData> WP(const std::string &NAME, int COOLDOWN,
-                                             int DAMAGE, const std::string &GRAPHIC)
-{
-    return std::make_pair(
-        NAME,
-        WeaponData{.cooldown = COOLDOWN, .damage = DAMAGE, .graphic = GRAPHIC});
-}
-
-std::vector<std::pair<std::string, WeaponData>> WEAPON_DATA = {
-    WP("sword", 100, 15, "./graphics/weapons/sword/full.png"),
-    WP("axe", 100, 15, "./graphics/weapons/axe/full.png"),
-    WP("lance", 100, 15, "./graphics/weapons/lance/full.png"),
-    WP("rapier", 100, 15, "./graphics/weapons/rapier/full.png"),
-    WP("sai", 100, 15, "./graphics/weapons/sai/full.png")};
+std::map<std::string, WeaponData> WEAPON_DATA = {
+    {"sword", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/sword/full.png"}},
+    {"axe", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/axe/full.png"}},
+    {"lance", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/lance/full.png"}},
+    {"rapier", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/rapier/full.png"}},
+    {"sai", WeaponData{.cooldown=100, .damage=15, .graphic="./graphics/weapons/sai/full.png"}}
+};
 
 inline std::pair<std::string, MagicData> MG(const std::string &NAME, int STRENGTH, int COST, const std::string &GRAPHIC)
 {

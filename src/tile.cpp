@@ -25,5 +25,6 @@ void Tile::init(const sf::Vector2f &pos)
   {
     this->get_rect({"topleft", pos});
   }
-  this->hitbox_ = this->rect_.inflate(0, -10);
+  const auto y_offset = HITBOX_OFFSET[this->sprite_type_];
+  this->hitbox_ = this->rect_.inflate(0, y_offset);
 }

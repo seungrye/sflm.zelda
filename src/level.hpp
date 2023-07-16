@@ -9,6 +9,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <vector>
+#include <iostream>
 #include "enemy.hpp"
 
 class YSortCameraGroup
@@ -44,6 +45,10 @@ public:
   void create_attack();
   void destroy_attack();
   void run();
+  void toggle_menu() {
+    this->game_paused = !this->game_paused;
+    // std::cout<<"toggle menu called"<<std::endl;
+  }
 
 private:
   auto random_choice(const std::vector<std::shared_ptr<SpriteTexture>> &list)
@@ -57,6 +62,11 @@ private:
   std::vector<std::shared_ptr<SpriteTexture>> attackable_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
+  // std::shared_ptr<Weapon> current_attack;
+  // std::shared_ptr<UI> ui;
+  // std::shared_ptr<Upgrade> upgrade;
+  // std::shared_ptr<AnimationPlayer> animation_player;
+  // std::shared_ptr<MagicPlayer> magic_player;
 
   bool game_paused;
 };

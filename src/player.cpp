@@ -18,7 +18,7 @@ Player::Player(const sf::Vector2f &pos,
     : status("down"), Entity(0, 0.15f, {0, 0}, obstacle_sprites), speed(5),
       attacking(false), attack_cooldown(sf::milliseconds(400)),
       weapon_index(0), magic_index(0), magic(MAGIC_DATA[magic_index].first),
-      weapon(WEAPON_DATA[weapon_index].first), can_switch_weapon(true),
+      can_switch_weapon(true),
       switch_duration_cooldown(sf::milliseconds(200)),
       can_switch_magic(true),
       vulernable(true), invincibility_duration(sf::milliseconds(300))
@@ -28,16 +28,18 @@ Player::Player(const sf::Vector2f &pos,
   this->get_rect({"topleft", pos});
   this->hitbox_ = this->rect_.inflate(0, -26);
 
+  this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index);
+
   this->import_player_assets();
   // this->create_attack = ;
   // this->destroy_attack = ;
 
-  this->stats = {.health=100, .energy=60, .attack=10, .magic=4, .speed=6};
-  this->max_stats = {.health=300, .energy=140, .attack=20, .magic=10, .speed=12};
-  this->upgrade_cost = {.health=100, .energy=100, .attack=100, .magic=100, .speed=100};
+  this->stats = {.health = 100, .energy = 60, .attack = 10, .magic = 4, .speed = 6};
+  this->max_stats = {.health = 300, .energy = 140, .attack = 20, .magic = 10, .speed = 12};
+  this->upgrade_cost = {.health = 100, .energy = 100, .attack = 100, .magic = 100, .speed = 100};
   this->health = this->stats.health;
   this->energy = this->stats.energy;
-  this->exp = 0; 
+  this->exp = 0;
 }
 
 void Player::import_player_assets()
@@ -98,7 +100,7 @@ void Player::input()
   {
     this->attacking = true;
     this->attack_time.restart();
-    //this->create_magic(this->magic, MAGIC_DATA[])
+    // this->create_magic(this->magic, MAGIC_DATA[])
   }
 
   // swap weapon
@@ -112,14 +114,16 @@ void Player::input()
     {
       this->weapon_index = 0;
     }
-    this->weapon = WEAPON_DATA[this->weapon_index].first;
+    this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index);
   }
 
   // swap magic
-  if (this->can_switch_magic && sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+  if (this->can_switch_magic && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+  {
     this->can_switch_magic = false;
     this->magic_index++;
-    if (this->magic_index >= MAGIC_DATA.size()) {
+    if (this->magic_index >= MAGIC_DATA.size())
+    {
       this->magic_index = 0;
     }
     this->magic = MAGIC_DATA[this->magic_index].first;
@@ -130,18 +134,26 @@ void Player::cooldowns()
 {
   if (this->attacking)
   {
-    if (this->attack_time.getElapsedTime() > this->attack_cooldown)
+    if (this->attack_time.getElapsedTime() > (this->attack_cooldown + sf::milliseconds(WEAPON_DATA[this->weapon].cooldown)))
     {
       this->attacking = true;
+      // this->destory_attack()
     }
   }
 
   if (!this->can_switch_weapon)
   {
-    if (this->weapon_switch_time.getElapsedTime() >
-        this->switch_duration_cooldown)
+    if (this->weapon_switch_time.getElapsedTime() > this->switch_duration_cooldown)
     {
       this->can_switch_weapon = true;
+    }
+  }
+
+  if (!this->vulernable)
+  {
+    if (this->hurt_time.getElapsedTime() > this->invincibility_duration)
+    {
+      this->vulernable = true;
     }
   }
 }
@@ -204,6 +216,16 @@ void Player::animate()
 
   this->update_sprite(animation[static_cast<int>(this->frame_index)]);
   this->get_rect({"center", this->hitbox_.center()});
+
+  if (!this->vulernable)
+  { // make flicker
+    auto alpha = this->wave_value();
+    this->sprite_.setColor(sf::Color(0xff, 0xff, 0xff, alpha));
+  }
+  else
+  {
+    this->sprite_.setColor(sf::Color(0xff, 0xff, 0xff, 0xff));
+  }
 }
 void Player::update()
 {
@@ -211,5 +233,6 @@ void Player::update()
   this->cooldowns();
   this->get_status();
   this->animate();
-  this->move(this->speed);
+  this->move(this->stats.speed);
+  this->energy_recovery();
 }

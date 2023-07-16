@@ -33,6 +33,14 @@ private:
   void animate();
   void update_sprite(std::shared_ptr<SpriteTexture> sprite);
 
+  void energy_recovery() {
+    if (this->energy <= this->stats.energy) {
+      this->energy += 0.01 * this->stats.magic;
+    } else {
+      this->energy = this->stats.energy;
+    }
+  }
+
 private:
   std::string status;
   int speed;
@@ -50,7 +58,7 @@ private:
   int magic_index;
   std::string magic;
   bool can_switch_magic;
-  
+
   bool vulernable;
   sf::Clock hurt_time;
   sf::Time invincibility_duration;
