@@ -101,7 +101,8 @@ void Player::input()
   {
     this->attacking = true;
     this->attack_time.restart();
-    // this->create_magic(this->magic, MAGIC_DATA[])
+    // magic_data = MAGIC_DATA[this->magic];
+    // this->create_magic(this->magic, magic_data.strengh, magic_data.cost)
   }
 
   // swap weapon
@@ -122,6 +123,7 @@ void Player::input()
   if (this->can_switch_magic_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
   {
     this->can_switch_magic_ = false;
+    this->magic_switch_time.restart();
     this->magic_index_++;
     if (this->magic_index_ >= MAGIC_DATA.size())
     {
@@ -137,7 +139,7 @@ void Player::cooldowns()
   {
     if (this->attack_time.getElapsedTime() > (this->attack_cooldown + sf::milliseconds(WEAPON_DATA[this->weapon].cooldown)))
     {
-      this->attacking = true;
+      this->attacking = false;
       // this->destory_attack()
     }
   }
@@ -147,6 +149,12 @@ void Player::cooldowns()
     if (this->weapon_switch_time.getElapsedTime() > this->switch_duration_cooldown)
     {
       this->can_switch_weapon_ = true;
+    }
+  }
+
+  if (!this->can_switch_magic_) {
+    if (this->magic_switch_time.getElapsedTime() > this->switch_duration_cooldown) {
+      this->can_switch_magic_ = true;
     }
   }
 

@@ -48,11 +48,11 @@ public:
 
     void update() override
     {
-        // this->hit_reaction();
+        this->hit_reaction();
         this->move(this->speed);
         this->animate();
-        // this->cooldowns();
-        // this->check_death();
+        this->cooldowns();
+        this->check_death();
     }
 
     void enemy_update(std::shared_ptr<Player> player) {
@@ -61,6 +61,37 @@ public:
     }
 
 private:
+    void hit_reaction() {
+        if (!this->vulernable) {
+            this->direction.x *= (this->resistance * -1); 
+            this->direction.y *= (this->resistance * -1); 
+        }        
+    }
+
+    void check_death() {
+        if (this->health <= 0) {
+            // this->death_sound.play();
+            // this->trigger_death_particles(this->rect_.center(), this->monster_name);
+            // this->kill(); // remove the Sprite from all Groups
+            // this->add_exp(this->exp);
+        }
+    }
+
+    void cooldowns() {
+        if (!this->can_attack) {
+            if (this->attack_time.getElapsedTime() > this->attack_cooldown) {
+                this->can_attack = true;
+
+            }
+        }
+
+        if (!this->vulernable) {
+            if (this->hit_time.getElapsedTime() > this->invincibility_duration) {
+                this->vulernable = true;
+            }
+        }
+    }
+
     void actions(std::shared_ptr<Player> player) {
         if (!this->status.compare("attack")) {
             // this->attack_sound.play();

@@ -61,6 +61,7 @@ private:
   std::string weapon;
   bool can_switch_weapon_;
   sf::Clock weapon_switch_time;
+  sf::Clock magic_switch_time;
   sf::Time switch_duration_cooldown;
 
   int magic_index_;
