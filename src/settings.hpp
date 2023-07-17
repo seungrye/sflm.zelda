@@ -34,16 +34,27 @@ const auto BAR_COLOR_SELECTED = sf::Color(0x11, 0x11, 0x11);
 const auto UPGRADE_BG_COLOR_SELECTED = sf::Color(0xee, 0xee, 0xee);
 
 template<typename T>
-const std::string& nth_name(const std::map<std::string, T> map, int nth) {
-    auto index = 0;
+const std::string& nth_name(const std::map<std::string, T>& map, int nth) {
+    if (nth < 0 || nth >= map.size()) {
+        throw std::out_of_range("Invalid nth index");
+    }
+    
+    auto it = map.begin();
+    std::advance(it, nth);
+    
+    return it->first;
+}
 
-    for (const auto &item : map)
-    {
-      if (index == nth) return item.first;
-      index++;
+template<typename T>
+const std::pair<std::string, T> nth_item(const std::map<std::string, T>& map, int nth) {
+    if (nth < 0 || nth >= map.size()) {
+        throw std::out_of_range("Invalid nth index");
     }
 
-    assert(false);
+    auto it = map.begin();
+    std::advance(it, nth);  // nth번째 위치로 이동
+
+    return *it;  // 해당 위치의 pair 반환
 }
 
 struct WeaponData {
@@ -75,5 +86,9 @@ struct MonsterData {
 };
 
 extern std::map<std::string, MonsterData> MONSTER_DATA;
+
+extern std::map<std::string, int> PLAYER_STATS;
+extern std::map<std::string, int> PLAYER_MAX_STATS;
+extern std::map<std::string, int> UPGRADE_COST;
 
 #endif

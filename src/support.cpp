@@ -10,6 +10,11 @@
 #include <vector>
 
 SpriteTexture::SpriteTexture() : texture_(std::make_shared<sf::Texture>()) {}
+SpriteTexture::SpriteTexture(const sf::Texture& texture) : texture_(std::make_shared<sf::Texture>(texture)) {
+    this->sprite_.setTexture(*this->texture_);
+    auto rect = this->sprite_.getTextureRect();
+    this->rect_ = py::Rect<float>(rect.left, rect.top, rect.width, rect.height);
+}
 
 SpriteTexture::SpriteTexture(unsigned width, unsigned height)
     : texture_(std::make_shared<sf::Texture>())

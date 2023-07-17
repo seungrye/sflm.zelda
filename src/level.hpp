@@ -7,6 +7,9 @@
 #include "support.hpp"
 #include "enemy.hpp"
 #include "ui.hpp"
+#include "magic.hpp"
+#include "particles.hpp"
+#include "upgrade.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <memory>
@@ -38,10 +41,23 @@ private:
   std::vector<std::shared_ptr<SpriteTexture>> sprites;
 };
 
-class Level
+class IDamagePlayer {
+  virtual void fire() = 0;
+};
+
+class Level 
+// : 
+// public IDamagePlayer, 
+// public ITriggerDeathParticles,
+// public IDestroyAttack,
+// public IAddXp,
+// public ICreateMagic,
+// public IDestroyMagic
 {
 public:
   Level();
+  // void IDamagePlayer::fire() {} override;
+
   void create_map();
   void create_attack();
   void destroy_attack();
@@ -65,7 +81,7 @@ private:
   std::shared_ptr<Player> player;
   // std::shared_ptr<Weapon> current_attack;
   UI ui;
-  // std::shared_ptr<Upgrade> upgrade;
+  std::shared_ptr<Upgrade> upgrade;
   // std::shared_ptr<AnimationPlayer> animation_player;
   // std::shared_ptr<MagicPlayer> magic_player;
 

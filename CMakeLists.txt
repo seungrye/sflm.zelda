@@ -12,6 +12,7 @@ add_executable(sfmlZelda
     src/settings.cpp
     src/support.cpp
     src/enemy.cpp
+    src/upgrade.cpp
     src/tile.cpp)
 
 target_link_libraries(sfmlZelda

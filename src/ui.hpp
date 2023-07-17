@@ -36,8 +36,9 @@ public:
     }
     void display(std::shared_ptr<Player> player)
     {
-        this->show_bar(player->health(), player->stats().health, this->health_bar_rect, HEALTH_COLOR);
-        this->show_bar(player->energy(), player->stats().energy, this->energy_bar_rect, ENERGY_COLOR);
+        auto stats = player->stats();
+        this->show_bar(player->health(), stats["health"], this->health_bar_rect, HEALTH_COLOR);
+        this->show_bar(player->energy(), stats["energy"], this->energy_bar_rect, ENERGY_COLOR);
         this->show_exp(player->exp());
 
         this->weapon_overlay(player->weapon_index(), player->can_switch_weapon());

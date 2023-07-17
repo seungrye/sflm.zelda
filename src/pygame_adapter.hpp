@@ -12,21 +12,22 @@ namespace py
   {
   public:
     Vector2() = default;
-    Vector2(const sf::Vector2<T>& other) : sf::Vector2<T>(other) {}
+    Vector2(const sf::Vector2<T> &other) : sf::Vector2<T>(other) {}
     Vector2(T X, T Y) : sf::Vector2<T>(X, Y)
     {
     }
 
     /**
      * @brief calculates the Euclidean distance to a given vector
-     * 
+     *
      * @param v 타겟 벡터
      * @return float Euclidean distance
      */
-    float distance_to(const py::Vector2<T>& v) {
+    float distance_to(const py::Vector2<T> &v)
+    {
       auto x = v.x - this->x;
       auto y = v.y - this->y;
-      return std::sqrt((x*x) + (y*y));
+      return std::sqrt((x * x) + (y * y));
     }
 
     /**

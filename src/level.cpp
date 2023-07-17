@@ -15,7 +15,10 @@
 #include <memory>
 #include <iostream>
 
-Level::Level() : game_paused(false)
+Level::Level() 
+: game_paused(false)
+// , animation_player(std::make_shared<AnimationPlayer>())
+// magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
   this->create_map();
 }
@@ -77,6 +80,7 @@ void Level::create_map()
           if (!col.compare("394"))
           {
             this->player = std::make_shared<Player>(sf::Vector2f(x, y), this->obstacle_sprites);
+            this->upgrade = std::make_shared<Upgrade>(this->player);
             this->visible_sprites.push_back(this->player
             // create_attack
             // destroy_attack
@@ -134,7 +138,7 @@ void Level::run()
 
   if (this->game_paused)
   {
-    // this->upgrade.display();
+    this->upgrade->display();
   }
   else
   {
