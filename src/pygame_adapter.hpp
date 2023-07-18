@@ -98,6 +98,29 @@ namespace py
       this->top = center.y - (this->height / 2);
     }
 
+    void set(const std::pair<std::string, sf::Vector2f>& pos) {
+      if (!pos.first.compare("midtop"))
+      {
+        auto diffx = pos.second.x - this->centerx;
+        this->left += diffx;
+        this->centerx += diffx;
+        this->top = pos.second.y;
+      } else if (!pos.first.compare("midbottom")) {
+        auto diffx = pos.second.x - this->centerx;
+        this->left += diffx;
+        this->centerx += diffx;
+        this->top = pos.second.y - this->height;
+      }
+    }
+
+    const sf::Vector2f midtop() {
+      return sf::Vector2f(this->centerx, this->top);
+    }
+
+    const sf::Vector2f midbottom() {
+      return sf::Vector2f(this->centerx, this->top + this->height);
+    }
+
     void transform(T x, T y)
     {
       this->centerx += x;

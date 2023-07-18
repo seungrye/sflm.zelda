@@ -17,9 +17,13 @@ public:
     void display(int selection_num, const std::string &name, int value, int max_value, int cost);
 
 private:
-    const py::Rect<float> rect_;
+    void display_name(const std::string& name, int cost, bool selected);
+    void display_bar(int value, int max_value, bool selected);
+
+private:
+    py::Rect<float> rect_;
     const int index;
-    const sf::Text &text;
+    sf::Text text;
 };
 
 class Upgrade

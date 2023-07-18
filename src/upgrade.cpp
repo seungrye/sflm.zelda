@@ -25,8 +25,8 @@ Upgrade::Upgrade(std::shared_ptr<Player> player)
     }
 
     sf::RenderTexture &renderTexture = GameWindow::instance().screen();
-    this->height = renderTexture.getSize().x * 0.8;
-    this->width = renderTexture.getSize().y / 6;
+    this->height = renderTexture.getSize().y * 0.8;
+    this->width = renderTexture.getSize().x / 6;
 
     this->create_items();
 
@@ -37,7 +37,6 @@ Upgrade::Upgrade(std::shared_ptr<Player> player)
 void Upgrade::create_items()
 {
     sf::RenderTexture &renderTexture = GameWindow::instance().screen();
-    this->height = renderTexture.getSize().x * 0.8;
 
     for (auto i = 0; i < this->attribute_names.size(); ++i)
     {
@@ -130,5 +129,74 @@ void Item::trigger(std::shared_ptr<Player> player)
 
 void Item::display(int selection_num, const std::string &name, int value, int max_value, int cost)
 {
-    // TODO:
+    sf::RenderTexture &renderTexture = GameWindow::instance().screen();
+
+    sf::RectangleShape rectangle({this->rect_.width, this->rect_.height});
+    if (this->index == selection_num)
+    {
+        rectangle.setFillColor(UPGRADE_BG_COLOR_SELECTED);
+    }
+    else
+    {
+        rectangle.setFillColor(UI_BG_COLOR);
+    }
+    rectangle.setPosition({this->rect_.left, this->rect_.top});
+
+    sf::RectangleShape border({this->rect_.width, this->rect_.height});
+    border.setOutlineThickness(4);
+    border.setFillColor(sf::Color::Transparent);
+    border.setPosition({this->rect_.left, this->rect_.top});
+
+    renderTexture.draw(rectangle);
+    renderTexture.draw(border);
+
+    this->display_name(name, cost, this->index == selection_num);
+    this->display_bar(value, max_value, this->index == selection_num);
+}
+
+void Item::display_name(const std::string &name, int cost, bool selected)
+{
+    sf::RenderTexture &renderTexture = GameWindow::instance().screen();
+    auto color = (selected) ? TEXT_COLOR_SELECTED : TEXT_COLOR;
+
+    // title
+    this->text.setString(name);
+    this->text.setFillColor(color);
+    auto text_rect = py::Rect<float>(text.getLocalBounds());
+    text_rect.set({"midtop", this->rect_.midtop() + sf::Vector2f(0, 20)});
+    this->text.setPosition({text_rect.left, text_rect.top});
+    renderTexture.draw(this->text);
+
+    // cost
+    this->text.setString(std::to_string(cost));
+    this->text.setFillColor(color);
+    auto cost_rect = py::Rect<float>(text.getLocalBounds());
+    cost_rect.set({"midbottom", this->rect_.midbottom() - sf::Vector2f(0, 20)});
+    this->text.setPosition({cost_rect.left, cost_rect.top});
+    renderTexture.draw(this->text);
+}
+
+void Item::display_bar(int value, int max_value, bool selected)
+{
+    sf::RenderTexture &renderTexture = GameWindow::instance().screen();
+    auto color = (selected) ? BAR_COLOR_SELECTED : BAR_COLOR;
+
+    auto top = this->rect_.midtop() + sf::Vector2f(0, 60);
+    auto bottom = this->rect_.midbottom() - sf::Vector2f(0, 60);
+
+    auto full_height = bottom.y - top.y;
+    auto relative_number = (value / max_value) * full_height;
+    auto value_rect = py::Rect<float>(top.x-15, bottom.y - relative_number, 30, 10);
+
+    sf::RectangleShape line({0, full_height});
+    line.setOutlineColor(color);
+    line.setOutlineThickness(2.5);
+    line.setPosition(top);
+
+    sf::RectangleShape rectangle({value_rect.width, value_rect.height});
+    rectangle.setFillColor(color);
+    rectangle.setPosition({value_rect.left, value_rect.top});
+
+    renderTexture.draw(line);
+    renderTexture.draw(rectangle);
 }
