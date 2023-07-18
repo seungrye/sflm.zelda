@@ -17,7 +17,7 @@
 
 Level::Level()
     : game_paused(false)
-// , animation_player(std::make_shared<AnimationPlayer>())
+, animation_player(std::make_shared<AnimationPlayer>())
 // magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
   this->create_map();
@@ -145,7 +145,29 @@ void Level::run()
   {
     this->visible_sprites.update();
     this->visible_sprites.enemy_update(this->player);
-    // this->player_attack_logic();
+    this->player_attack_logic();
+  }
+}
+
+void Level::player_attack_logic() {
+  for (const auto& attack_sprite: this->attack_sprites) {
+    auto collision_sprites = ::spritecollide(attack_sprite, this->attackable_sprites);
+    for (const auto& collision_sprite: collision_sprites) {
+      if (!collision_sprite->sprite_type().compare("grass")) {
+        auto rect = collision_sprite->rect();
+        auto pos = rect.center();
+        auto offset = py::Vector2f(0, 75);
+        int range = 3 + (rand() % 6);
+        for (auto i = 0; i < range; ++i) {
+          auto particle = this->animation_player->create_grass_particles(pos - offset);
+          this->visible_sprites.push_back(particle);
+        }
+        //TODO: remove collision_sprite from attackable_sprites
+      } else if (!collision_sprite->sprite_type().compare("enemy")) {
+        auto enemy = std::dynamic_pointer_cast<Enemy>(collision_sprite);
+        enemy->get_damage(this->player, attack_sprite->sprite_type());
+      }
+    }
   }
 }
 

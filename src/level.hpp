@@ -87,6 +87,8 @@ public:
   }
 
 private:
+  void player_attack_logic();
+
   auto random_choice(const std::vector<std::shared_ptr<SpriteTexture>> &list)
   {
     return list[random() % list.size()];
@@ -101,7 +103,7 @@ private:
   // std::shared_ptr<Weapon> current_attack;
   UI ui;
   std::shared_ptr<Upgrade> upgrade;
-  // std::shared_ptr<AnimationPlayer> animation_player;
+  std::shared_ptr<AnimationPlayer> animation_player;
   // std::shared_ptr<MagicPlayer> magic_player;
 
   bool game_paused;

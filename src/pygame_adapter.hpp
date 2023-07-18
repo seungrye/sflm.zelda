@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <cmath>
+#include <memory>
+#include <vector>
 
 namespace py
 {
@@ -98,14 +100,17 @@ namespace py
       this->top = center.y - (this->height / 2);
     }
 
-    void set(const std::pair<std::string, sf::Vector2f>& pos) {
+    void set(const std::pair<std::string, sf::Vector2f> &pos)
+    {
       if (!pos.first.compare("midtop"))
       {
         auto diffx = pos.second.x - this->centerx;
         this->left += diffx;
         this->centerx += diffx;
         this->top = pos.second.y;
-      } else if (!pos.first.compare("midbottom")) {
+      }
+      else if (!pos.first.compare("midbottom"))
+      {
         auto diffx = pos.second.x - this->centerx;
         this->left += diffx;
         this->centerx += diffx;
@@ -113,11 +118,13 @@ namespace py
       }
     }
 
-    const sf::Vector2f midtop() {
+    const sf::Vector2f midtop()
+    {
       return sf::Vector2f(this->centerx, this->top);
     }
 
-    const sf::Vector2f midbottom() {
+    const sf::Vector2f midbottom()
+    {
       return sf::Vector2f(this->centerx, this->top + this->height);
     }
 
@@ -137,7 +144,9 @@ namespace py
 
   typedef Rect<int> IntRect;
   typedef Rect<float> FloatRect;
-
 } // namespace py
+
+class SpriteTexture;
+std::vector<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_list);
 
 #endif

@@ -57,6 +57,18 @@ public:
     this->upgrade_cost_[key] = value;
   }
 
+    int get_full_weapon_damage() {
+        auto base_damage = this->stats_["attack"];
+        auto weapon_damage = WEAPON_DATA[this->weapon].damage;
+        return base_damage + weapon_damage;
+    }
+
+    int get_full_magic_damage() {
+        auto base_damage = this->stats_["attack"];
+        auto magic_damage = MAGIC_DATA[this->magic].strength;
+        return base_damage + magic_damage;
+    }
+
 private:
   void import_player_assets();
   void input();

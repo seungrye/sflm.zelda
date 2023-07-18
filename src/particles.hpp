@@ -3,9 +3,14 @@
 
 #include "support.hpp"
 
+// TODO:
 class ParticleEffect : public SpriteTexture
 {
 public:
+    ParticleEffect(const sf::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprites)
+    {
+    }
+
 private:
 };
 
@@ -46,9 +51,25 @@ public:
         }
     }
 
-    
+    std::shared_ptr<SpriteTexture> create_grass_particles(const py::Vector2f &pos)
+    {
+        auto animation_frames = this->random_choice<std::vector<std::shared_ptr<SpriteTexture>>>(this->leaf_frames);
+        return std::make_shared<ParticleEffect>(pos, animation_frames);
+    }
+
+    std::shared_ptr<SpriteTexture> create_particles(const py::Vector2f &pos, const std::string &attack_type)
+    {
+        auto animation_frames = this->frames[attack_type];
+        return std::make_shared<ParticleEffect>(pos, animation_frames);
+    }
 
 private:
+    template <typename T>
+    const T &random_choice(const std::vector<T> &list)
+    {
+        return list[random() % list.size()];
+    }
+
     std::vector<std::shared_ptr<SpriteTexture>> reflect_images(const std::vector<std::shared_ptr<SpriteTexture>> &frames)
     {
         auto new_frames = std::vector<std::shared_ptr<SpriteTexture>>(frames.size());

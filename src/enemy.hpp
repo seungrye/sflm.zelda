@@ -60,6 +60,19 @@ public:
         this->actions(player);
     }
 
+    void get_damage(std::shared_ptr<Player> player, const std::string& attack_type) {
+        if (this->vulernable) {
+            // this->hit_sound.play();
+            this->direction = this->get_player_distance_direction(player).second;
+            if (!attack_type.compare("weapon")) {
+                this->health -= player->get_full_weapon_damage();
+            } else {
+                this->health -= player->get_full_magic_damage();
+            }
+            this->hit_time.restart();
+            this->vulernable = false;
+        }
+    }
 private:
     void hit_reaction() {
         if (!this->vulernable) {

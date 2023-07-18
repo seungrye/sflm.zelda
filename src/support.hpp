@@ -34,6 +34,12 @@ public:
   const py::Rect<float> &rect();
   const sf::Sprite &surf();
   const py::Rect<float> &hitbox();
+  const py::Rect<float> get_global_bounds()
+  {
+    return py::Rect<float>(this->sprite_.getGlobalBounds());
+  }
+  const std::string &sprite_type() { return this->sprite_type_; }
+
   /**
    * @brief sprite 의 hitbox 와 충될되는 면적이 있는지 여부를 반환
    *
