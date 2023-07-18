@@ -10,6 +10,7 @@
 #include "magic.hpp"
 #include "particles.hpp"
 #include "upgrade.hpp"
+#include "actions.hpp"
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <memory>
@@ -22,9 +23,12 @@ public:
   YSortCameraGroup();
   void custom_draw(std::shared_ptr<Player> player);
   void update();
-  void enemy_update(std::shared_ptr<Player> player) {
-    for(const auto& sprite: this->sprites) {
-      if (sprite->is("enemy")) {
+  void enemy_update(std::shared_ptr<Player> player)
+  {
+    for (const auto &sprite : this->sprites)
+    {
+      if (sprite->is("enemy"))
+      {
         auto enemy = std::dynamic_pointer_cast<Enemy>(sprite);
         enemy->enemy_update(player);
       }
@@ -41,28 +45,43 @@ private:
   std::vector<std::shared_ptr<SpriteTexture>> sprites;
 };
 
-class IDamagePlayer {
-  virtual void fire() = 0;
-};
-
-class Level 
-// : 
-// public IDamagePlayer, 
-// public ITriggerDeathParticles,
-// public IDestroyAttack,
-// public IAddXp,
-// public ICreateMagic,
-// public IDestroyMagic
+class Level : public virtual IDamagePlayer,
+              // public ITriggerDeathParticles,
+              public virtual ICreateAttack,
+              public virtual IDestroyAttack,
+              // public IAddXp,
+              public virtual ICreateMagic,
+              public virtual IDestroyMagic
 {
 public:
   Level();
-  // void IDamagePlayer::fire() {} override;
+  void fire(IDamagePlayer * /*self*/) override
+  {
+    std::cout << "IDamagePlayer" << std::endl;
+  }
+  void fire(ICreateAttack * /*self*/) override
+  {
+    std::cout << "ICreateAttack" << std::endl;
+  }
+  void fire(IDestroyAttack * /*self*/) override
+  {
+    std::cout << "IDestroyAttack" << std::endl;
+  }
+  void fire(ICreateMagic * /*self*/, const std::string style, int strength, int cost) override
+  {
+    std::cout << "ICreateMagic(" << style << strength << cost << ")" << std::endl;
+  }
+  void fire(IDestroyMagic * /*self*/) override
+  {
+    std::cout << "IDestroyMagic" << std::endl;
+  }
 
   void create_map();
   void create_attack();
   void destroy_attack();
   void run();
-  void toggle_menu() {
+  void toggle_menu()
+  {
     this->game_paused = !this->game_paused;
     // std::cout<<"toggle menu called"<<std::endl;
   }

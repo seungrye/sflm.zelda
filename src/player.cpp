@@ -15,14 +15,29 @@
 #include <vector>
 
 Player::Player(const sf::Vector2f &pos,
-               const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
-    : status("down"), Entity(0, 0.15f, {0, 0}, obstacle_sprites), speed(5),
-      attacking(false), attack_cooldown(sf::milliseconds(400)),
-      weapon_index_(0), magic_index_(0),
+               const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+               ICreateAttack *create_attack,
+               IDestroyAttack *destroy_attack,
+               ICreateMagic *create_magic,
+               IDestroyMagic *destroy_magic,
+               IDamagePlayer *damage_player)
+    : Entity(0, 0.15f, {0, 0}, obstacle_sprites),
+      status("down"),
+      speed(5),
+      attacking(false),
+      attack_cooldown(sf::milliseconds(400)),
+      weapon_index_(0),
+      magic_index_(0),
       can_switch_weapon_(true),
       switch_duration_cooldown(sf::milliseconds(200)),
       can_switch_magic_(true),
-      vulernable(true), invincibility_duration(sf::milliseconds(300))
+      vulernable(true),
+      invincibility_duration(sf::milliseconds(300)),
+      create_attack(create_attack),
+      destroy_attack(destroy_attack),
+      create_magic(create_magic),
+      destroy_magic(destroy_magic),
+      damage_player(damage_player)
 {
   auto r = this->loadFromFile("./src/graphics/player.png");
   assert(r);
@@ -33,8 +48,6 @@ Player::Player(const sf::Vector2f &pos,
   this->magic = nth_name(MAGIC_DATA, this->magic_index_);
 
   this->import_player_assets();
-  // this->create_attack = ;
-  // this->destroy_attack = ;
 
   this->stats_ = PLAYER_STATS;
   this->max_stats_ = PLAYER_MAX_STATS;
@@ -93,7 +106,7 @@ void Player::input()
   {
     this->attacking = true;
     this->attack_time.restart();
-    // this->create_attack();
+    this->create_attack->fire(this->create_attack);
     // this->weapon_attacks_sound.play();
   }
 
@@ -102,8 +115,11 @@ void Player::input()
   {
     this->attacking = true;
     this->attack_time.restart();
-    // magic_data = MAGIC_DATA[this->magic];
-    // this->create_magic(this->magic, magic_data.strengh, magic_data.cost)
+    auto magic_data = MAGIC_DATA[this->magic];
+    this->create_magic->fire(this->create_magic,
+                             this->magic,
+                             magic_data.strength,
+                             magic_data.cost);
   }
 
   // swap weapon
@@ -120,7 +136,7 @@ void Player::input()
     this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index_);
   }
 
-  // swap magic
+  // swap magic::Z
   if (this->can_switch_magic_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
   {
     this->can_switch_magic_ = false;
@@ -141,7 +157,8 @@ void Player::cooldowns()
     if (this->attack_time.getElapsedTime() > (this->attack_cooldown + sf::milliseconds(WEAPON_DATA[this->weapon].cooldown)))
     {
       this->attacking = false;
-      // this->destory_attack()
+      this->destroy_attack->fire(this->destroy_attack);
+      //?? destroy_magic 은 언제 어디서 호출되어야 할까?
     }
   }
 
@@ -153,8 +170,10 @@ void Player::cooldowns()
     }
   }
 
-  if (!this->can_switch_magic_) {
-    if (this->magic_switch_time.getElapsedTime() > this->switch_duration_cooldown) {
+  if (!this->can_switch_magic_)
+  {
+    if (this->magic_switch_time.getElapsedTime() > this->switch_duration_cooldown)
+    {
       this->can_switch_magic_ = true;
     }
   }
@@ -187,9 +206,9 @@ void Player::get_status()
     this->direction.y = 0;
     if (std::string::npos == this->status.find("attack"))
     {
-      if (std::string::npos != this->status.compare("idle"))
+      if (std::string::npos != this->status.find("idle"))
       { // found
-        auto index = this->status.find_first_of("idle");
+        auto index = this->status.find("idle");
         this->status = this->status.substr(0, index) + "attack";
       }
       else
@@ -202,7 +221,7 @@ void Player::get_status()
   {
     if (std::string::npos != this->status.find("attack"))
     { // found
-      auto index = this->status.find_first_of("attack");
+      auto index = this->status.find("attack");
       this->status = this->status.substr(0, index) + "idle";
     }
   }

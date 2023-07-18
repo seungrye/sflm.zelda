@@ -15,8 +15,8 @@
 #include <memory>
 #include <iostream>
 
-Level::Level() 
-: game_paused(false)
+Level::Level()
+    : game_paused(false)
 // , animation_player(std::make_shared<AnimationPlayer>())
 // magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
@@ -79,15 +79,16 @@ void Level::create_map()
         {
           if (!col.compare("394"))
           {
-            this->player = std::make_shared<Player>(sf::Vector2f(x, y), this->obstacle_sprites);
+            this->player = std::make_shared<Player>(
+                sf::Vector2f(x, y),
+                this->obstacle_sprites,
+                this,
+                this,
+                this,
+                this,
+                this);
             this->upgrade = std::make_shared<Upgrade>(this->player);
-            this->visible_sprites.push_back(this->player
-            // create_attack
-            // destroy_attack
-            // create_magic
-            // destroy_magic
-            // damage_player
-            );
+            this->visible_sprites.push_back(this->player);
           }
           else
           {
@@ -106,8 +107,8 @@ void Level::create_map()
             if (!monster_name.empty())
             {
               auto enemy = std::make_shared<Enemy>(monster_name, sf::Vector2f(x, y), this->obstacle_sprites
-              // trigger_death_particles
-              // add_xp
+                                                   // trigger_death_particles
+                                                   // add_xp
               );
               this->visible_sprites.push_back(enemy);
               this->attackable_sprites.push_back(enemy);

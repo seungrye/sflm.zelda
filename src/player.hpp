@@ -5,6 +5,7 @@
 #include "support.hpp"
 #include "entity.hpp"
 #include "settings.hpp"
+#include "actions.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -15,7 +16,12 @@ class Player : public Entity
 {
 public:
   Player(const sf::Vector2f &pos,
-         const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites);
+         const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+         ICreateAttack *create_attack,
+         IDestroyAttack *destroy_attack,
+         ICreateMagic *create_magic,
+         IDestroyMagic *destroy_magic,
+         IDamagePlayer *damage_player);
 
   void update() override;
   const int health() { return this->health_; }
@@ -70,6 +76,13 @@ private:
       this->energy_ = this->stats_["energy"];
     }
   }
+
+private:
+  ICreateAttack *create_attack;
+  IDestroyAttack *destroy_attack;
+  ICreateMagic *create_magic;
+  IDestroyMagic *destroy_magic;
+  IDamagePlayer *damage_player;
 
 private:
   std::string status;
