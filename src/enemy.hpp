@@ -15,7 +15,7 @@ class Enemy : public Entity
 {
 public:
     Enemy(const std::string &monster_name, const sf::Vector2f &pos,
-          const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites);
+          const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites);
 
     void import_graphics(const std::string &monster_name);
 

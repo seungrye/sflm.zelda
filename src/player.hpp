@@ -11,12 +11,13 @@
 #include <SFML/System/Vector2.hpp>
 #include <map>
 #include <memory>
+#include <list>
 
 class Player : public Entity
 {
 public:
   Player(const sf::Vector2f &pos,
-         const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack);
+         const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack);
 
   void update() override;
   const int health() { return this->health_; }

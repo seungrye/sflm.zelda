@@ -17,8 +17,7 @@
 #include <iostream>
 
 Level::Level()
-    : game_paused(false)
-, animation_player(std::make_shared<AnimationPlayer>())
+    : game_paused(false), animation_player(std::make_shared<AnimationPlayer>())
 // magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
   this->create_map();
@@ -127,8 +126,10 @@ void Level::create_map()
   }
 #endif
 }
-void Level::destroy_attack() {
-  if (this->current_attack) {
+void Level::destroy_attack()
+{
+  if (this->current_attack)
+  {
     // this->current_attack.kill();
     this->current_attack = nullptr;
   }
@@ -150,21 +151,32 @@ void Level::run()
   }
 }
 
-void Level::player_attack_logic() {
-  for (const auto& attack_sprite: this->attack_sprites) {
+void Level::player_attack_logic()
+{
+  for (const auto &attack_sprite : this->attack_sprites)
+  {
     auto collision_sprites = ::spritecollide(attack_sprite, this->attackable_sprites);
-    for (const auto& collision_sprite: collision_sprites) {
-      if (!collision_sprite->sprite_type().compare("grass")) {
+    for (const auto &collision_sprite : collision_sprites)
+    {
+      if (!collision_sprite->sprite_type().compare("grass"))
+      {
         auto rect = collision_sprite->rect();
         auto pos = rect.center();
         auto offset = py::Vector2f(0, 75);
         int range = 3 + (rand() % 4); // 3 ~ 6
-        for (auto i = 0; i < range; ++i) {
+        for (auto i = 0; i < range; ++i)
+        {
           auto particle = this->animation_player->create_grass_particles(pos - offset);
           this->visible_sprites.push_back(particle);
         }
-        //TODO: remove collision_sprite from attackable_sprites
-      } else if (!collision_sprite->sprite_type().compare("enemy")) {
+
+        // WIP: remove collision_sprite from attackable_sprites
+        this->attackable_sprites.remove(collision_sprite);
+        this->visible_sprites.remove(collision_sprite);
+        this->obstacle_sprites.remove(collision_sprite);
+      }
+      else if (!collision_sprite->sprite_type().compare("enemy"))
+      {
         auto enemy = std::dynamic_pointer_cast<Enemy>(collision_sprite);
         enemy->get_damage(this->player, attack_sprite->sprite_type());
       }
@@ -194,11 +206,16 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   this->floor.set_origin(floor_offset_pos);
   GameWindow::instance().screen().draw(this->floor.surf());
 
-  std::sort(std::begin(this->sprites), std::end(this->sprites),
-            [](auto a, auto b) -> bool
-            {
-              return a->rect().centery < b->rect().centery;
-            });
+  // std::sort(std::begin(this->sprites), std::end(this->sprites),
+  //           [](auto a, auto b) -> bool
+  //           {
+  //             return a->rect().centery < b->rect().centery;
+  //           });
+  this->sprites.sort(
+      [](auto a, auto b) -> bool
+      {
+        return a->rect().centery < b->rect().centery;
+      });
 
   for (const auto &sprite : this->sprites)
   {
@@ -241,19 +258,19 @@ void YSortCameraGroup::update()
   }
 }
 
-
-
-
-class CreateAttack : public ICommand {
+class CreateAttack : public ICommand
+{
 public:
-CreateAttack(Level& level) : level(level) {
+  CreateAttack(Level &level) : level(level)
+  {
+  }
+  void invoke() override
+  {
+    level.current_attack = std::make_shared<Weapon>(level.player);
+    level.visible_sprites.push_back(level.current_attack);
+    level.attack_sprites.push_back(level.current_attack);
+  }
 
-}
-void invoke() override {
-  level.current_attack = std::make_shared<Weapon>(level.player);
-  level.visible_sprites.push_back(level.current_attack);
-  level.attack_sprites.push_back(level.current_attack);
-}
 private:
-Level& level;
+  Level &level;
 };

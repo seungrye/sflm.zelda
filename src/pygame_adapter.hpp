@@ -6,6 +6,7 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+#include <list>
 
 namespace py
 {
@@ -156,6 +157,8 @@ namespace py
 } // namespace py
 
 class SpriteTexture;
+
 std::vector<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_list);
+std::list<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const std::list<std::shared_ptr<SpriteTexture>> &sprite_list);
 
 #endif

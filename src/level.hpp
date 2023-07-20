@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <list>
 
 class YSortCameraGroup
 {
@@ -35,6 +36,7 @@ public:
     }
   }
   void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
+  void remove(const std::shared_ptr<SpriteTexture>& __x) { this->sprites.remove(__x); }
 
 private:
   unsigned half_width;
@@ -42,7 +44,7 @@ private:
   sf::Vector2f offset;
 
   SpriteTexture floor;
-  std::vector<std::shared_ptr<SpriteTexture>> sprites;
+  std::list<std::shared_ptr<SpriteTexture>> sprites;
 };
 
 class CreateAttack;
@@ -72,8 +74,8 @@ private:
 private:
   friend class CreateAttack;
   YSortCameraGroup visible_sprites;
-  std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
-  std::vector<std::shared_ptr<SpriteTexture>> attackable_sprites;
+  std::list<std::shared_ptr<SpriteTexture>> obstacle_sprites;
+  std::list<std::shared_ptr<SpriteTexture>> attackable_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
   std::shared_ptr<SpriteTexture> current_attack;

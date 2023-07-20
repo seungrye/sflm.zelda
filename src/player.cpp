@@ -15,7 +15,7 @@
 #include <vector>
 
 Player::Player(const sf::Vector2f &pos,
-               const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack)
+               const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack)
     : Entity(0, 0.15f, {0, 0}, obstacle_sprites),
       status_("down"),
       speed(5),

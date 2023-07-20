@@ -13,7 +13,10 @@ public:
         this->frame_index = 0;
         this->animation_speed = 0.15f;
         this->update_sprite(this->frames[static_cast<int>(this->frame_index)]);
-        this->get_rect({"center", pos});
+
+        for (const auto& frame : this->frames) {
+            frame->get_rect({"center", pos});
+        }
     }
 
     void animate()
@@ -21,6 +24,7 @@ public:
         this->frame_index += this->animation_speed;
         if (this->frame_index >= static_cast<float>(this->frames.size()))
         {
+            this->frame_index = 0.f;
             // this->kill();
         }
         else

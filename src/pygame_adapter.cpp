@@ -3,9 +3,10 @@
 #include <memory>
 #include <vector>
 
-std::vector<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_list)
+template <typename T>
+T __spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const T &sprite_list)
 {
-    auto collision_sprites = std::vector<std::shared_ptr<SpriteTexture>>();
+    auto collision_sprites = T();
 
     for (const auto &candidate : sprite_list)
     {
@@ -17,4 +18,14 @@ std::vector<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<
     }
 
     return collision_sprites;
+}
+
+std::vector<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_list)
+{
+    return __spritecollide<std::vector<std::shared_ptr<SpriteTexture>>>(sprite, sprite_list);
+}
+
+std::list<std::shared_ptr<SpriteTexture>> spritecollide(const std::shared_ptr<SpriteTexture> &sprite, const std::list<std::shared_ptr<SpriteTexture>> &sprite_list)
+{
+    return __spritecollide<std::list<std::shared_ptr<SpriteTexture>>>(sprite, sprite_list);
 }

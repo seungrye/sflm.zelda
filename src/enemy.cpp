@@ -4,7 +4,7 @@
 #include <algorithm>
 
 Enemy::Enemy(const std::string &monster_name, const sf::Vector2f &pos,
-             const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
+             const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
     : status("idle"), Entity(0, 0.15, {0, 0}, obstacle_sprites),
       monster_name(monster_name), can_attack(true), attack_cooldown(sf::milliseconds(400)),
       vulernable(true), invincibility_duration(sf::milliseconds(300))

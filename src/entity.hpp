@@ -2,6 +2,7 @@
 #define __ENTITY_HPP__
 
 #include "support.hpp"
+#include <list>
 
 class Entity : public SpriteTexture
 {
@@ -9,7 +10,7 @@ public:
     Entity(const float &frame_index,
            const float &animation_speed,
            const py::Vector2f &direction,
-           const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
+           const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
         : frame_index(frame_index), animation_speed(animation_speed), direction(direction), obstacle_sprites(obstacle_sprites) {}
 
     int wave_value()
@@ -85,7 +86,7 @@ protected:
     float frame_index;
     float animation_speed;
     py::Vector2f direction;
-    const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites;
+    const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites;
 };
 
 #endif /* __ENTITY_HPP__ */
