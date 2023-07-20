@@ -10,10 +10,11 @@
 #include <vector>
 
 SpriteTexture::SpriteTexture() : texture_(std::make_shared<sf::Texture>()) {}
-SpriteTexture::SpriteTexture(const sf::Texture& texture) : texture_(std::make_shared<sf::Texture>(texture)) {
-    this->sprite_.setTexture(*this->texture_);
-    auto rect = this->sprite_.getTextureRect();
-    this->rect_ = py::Rect<float>(rect.left, rect.top, rect.width, rect.height);
+SpriteTexture::SpriteTexture(const sf::Texture &texture) : texture_(std::make_shared<sf::Texture>(texture))
+{
+  this->sprite_.setTexture(*this->texture_);
+  auto rect = this->sprite_.getTextureRect();
+  this->rect_ = py::Rect<float>(rect.left, rect.top, rect.width, rect.height);
 }
 
 SpriteTexture::SpriteTexture(unsigned width, unsigned height)
@@ -70,7 +71,26 @@ SpriteTexture::get_rect(const std::pair<std::string, sf::Vector2f> &pos)
   {
     this->rect_.center(pos.second);
   }
-
+  else if (!pos.first.compare("midleft"))
+  {
+    this->rect_ = py::Rect<float>(pos.second.x, pos.second.y - (this->rect_.height / 2),
+                                  this->rect_.width, this->rect_.height);
+  }
+  else if (!pos.first.compare("midright"))
+  {
+    this->rect_ = py::Rect<float>(pos.second.x - this->rect_.width, pos.second.y - (this->rect_.height / 2),
+                                  this->rect_.width, this->rect_.height);
+  }
+  else if (!pos.first.compare("midbottom"))
+  {
+    this->rect_ = py::Rect<float>(pos.second.x - (this->rect_.width / 2), pos.second.y - (this->rect_.height),
+                                  this->rect_.width, this->rect_.height);
+  }
+  else if (!pos.first.compare("midtop"))
+  {
+    this->rect_ = py::Rect<float>(pos.second.x - (this->rect_.width / 2), pos.second.y,
+                                  this->rect_.width, this->rect_.height);
+  }
   return this->rect_;
 }
 

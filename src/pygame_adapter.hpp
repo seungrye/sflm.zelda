@@ -128,6 +128,15 @@ namespace py
       return sf::Vector2f(this->centerx, this->top + this->height);
     }
 
+    const sf::Vector2f midright()
+    {
+      return sf::Vector2f(this->left + this->width, this->centery);
+    }
+    const sf::Vector2f midleft()
+    {
+      return sf::Vector2f(this->left, this->centery);
+    }
+
     void transform(T x, T y)
     {
       this->centerx += x;

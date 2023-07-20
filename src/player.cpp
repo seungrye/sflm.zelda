@@ -15,14 +15,9 @@
 #include <vector>
 
 Player::Player(const sf::Vector2f &pos,
-               const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
-               ICreateAttack *create_attack,
-               IDestroyAttack *destroy_attack,
-               ICreateMagic *create_magic,
-               IDestroyMagic *destroy_magic,
-               IDamagePlayer *damage_player)
+               const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack)
     : Entity(0, 0.15f, {0, 0}, obstacle_sprites),
-      status("down"),
+      status_("down"),
       speed(5),
       attacking(false),
       attack_cooldown(sf::milliseconds(400)),
@@ -32,19 +27,14 @@ Player::Player(const sf::Vector2f &pos,
       switch_duration_cooldown(sf::milliseconds(200)),
       can_switch_magic_(true),
       vulernable(true),
-      invincibility_duration(sf::milliseconds(300)),
-      create_attack(create_attack),
-      destroy_attack(destroy_attack),
-      create_magic(create_magic),
-      destroy_magic(destroy_magic),
-      damage_player(damage_player)
+      invincibility_duration(sf::milliseconds(300)), create_attack(create_attack)
 {
   auto r = this->loadFromFile("./src/graphics/player.png");
   assert(r);
   this->get_rect({"topleft", pos});
   this->hitbox_ = this->rect_.inflate(0, -26);
 
-  this->weapon = nth_name(WEAPON_DATA, this->weapon_index_);
+  this->weapon_ = nth_name(WEAPON_DATA, this->weapon_index_);
   this->magic = nth_name(MAGIC_DATA, this->magic_index_);
 
   this->import_player_assets();
@@ -78,12 +68,12 @@ void Player::input()
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
   {
     this->direction.x = -1;
-    this->status = "left";
+    this->status_ = "left";
   }
   else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
   {
     this->direction.x = 1;
-    this->status = "right";
+    this->status_ = "right";
   }
   else
     this->direction.x = 0;
@@ -91,12 +81,12 @@ void Player::input()
   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
   {
     this->direction.y = -1;
-    this->status = "up";
+    this->status_ = "up";
   }
   else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
   {
     this->direction.y = 1;
-    this->status = "down";
+    this->status_ = "down";
   }
   else
     this->direction.y = 0;
@@ -106,7 +96,7 @@ void Player::input()
   {
     this->attacking = true;
     this->attack_time.restart();
-    this->create_attack->fire(this->create_attack);
+    this->create_attack->invoke();
     // this->weapon_attacks_sound.play();
   }
 
@@ -116,10 +106,10 @@ void Player::input()
     this->attacking = true;
     this->attack_time.restart();
     auto magic_data = MAGIC_DATA[this->magic];
-    this->create_magic->fire(this->create_magic,
-                             this->magic,
-                             magic_data.strength,
-                             magic_data.cost);
+    // this->create_magic->fire(this->create_magic,
+    //                          this->magic,
+    //                          magic_data.strength,
+    //                          magic_data.cost);
   }
 
   // swap weapon
@@ -133,7 +123,7 @@ void Player::input()
     {
       this->weapon_index_ = 0;
     }
-    this->weapon = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index_);
+    this->weapon_ = nth_name<WeaponData>(WEAPON_DATA, this->weapon_index_);
   }
 
   // swap magic::Z
@@ -154,10 +144,10 @@ void Player::cooldowns()
 {
   if (this->attacking)
   {
-    if (this->attack_time.getElapsedTime() > (this->attack_cooldown + sf::milliseconds(WEAPON_DATA[this->weapon].cooldown)))
+    if (this->attack_time.getElapsedTime() > (this->attack_cooldown + sf::milliseconds(WEAPON_DATA[this->weapon_].cooldown)))
     {
       this->attacking = false;
-      this->destroy_attack->fire(this->destroy_attack);
+      // this->destroy_attack->fire(this->destroy_attack);
       //?? destroy_magic 은 언제 어디서 호출되어야 할까?
     }
   }
@@ -191,12 +181,12 @@ void Player::get_status()
 {
   if (this->direction.x == 0 && this->direction.y == 0)
   {
-    if (std::string::npos == this->status.find("idle") &&
-        std::string::npos == this->status.find("attack"))
+    if (std::string::npos == this->status_.find("idle") &&
+        std::string::npos == this->status_.find("attack"))
     { // not idle or attack
       std::stringstream ss;
-      ss << this->status << "_idle";
-      this->status = ss.str();
+      ss << this->status_ << "_idle";
+      this->status_ = ss.str();
     }
   }
 
@@ -204,25 +194,25 @@ void Player::get_status()
   {
     this->direction.x = 0;
     this->direction.y = 0;
-    if (std::string::npos == this->status.find("attack"))
+    if (std::string::npos == this->status_.find("attack"))
     {
-      if (std::string::npos != this->status.find("idle"))
+      if (std::string::npos != this->status_.find("idle"))
       { // found
-        auto index = this->status.find("idle");
-        this->status = this->status.substr(0, index) + "attack";
+        auto index = this->status_.find("idle");
+        this->status_ = this->status_.substr(0, index) + "attack";
       }
       else
       {
-        this->status = this->status + "_attack";
+        this->status_ = this->status_ + "_attack";
       }
     }
   }
   else
   {
-    if (std::string::npos != this->status.find("attack"))
+    if (std::string::npos != this->status_.find("attack"))
     { // found
-      auto index = this->status.find("attack");
-      this->status = this->status.substr(0, index) + "idle";
+      auto index = this->status_.find("attack");
+      this->status_ = this->status_.substr(0, index) + "idle";
     }
   }
 }
@@ -236,7 +226,7 @@ void Player::update_sprite(std::shared_ptr<SpriteTexture> sprite)
 
 void Player::animate()
 {
-  auto animation = this->animations[this->status];
+  auto animation = this->animations[this->status_];
   this->frame_index += this->animation_speed;
   if (this->frame_index >= static_cast<float>(animation.size()))
   {

@@ -45,39 +45,14 @@ private:
   std::vector<std::shared_ptr<SpriteTexture>> sprites;
 };
 
-class Level : public virtual IDamagePlayer,
-              // public ITriggerDeathParticles,
-              public virtual ICreateAttack,
-              public virtual IDestroyAttack,
-              // public IAddXp,
-              public virtual ICreateMagic,
-              public virtual IDestroyMagic
+class CreateAttack;
+
+class Level
 {
 public:
   Level();
-  void fire(IDamagePlayer * /*self*/) override
-  {
-    std::cout << "IDamagePlayer" << std::endl;
-  }
-  void fire(ICreateAttack * /*self*/) override
-  {
-    std::cout << "ICreateAttack" << std::endl;
-  }
-  void fire(IDestroyAttack * /*self*/) override
-  {
-    std::cout << "IDestroyAttack" << std::endl;
-  }
-  void fire(ICreateMagic * /*self*/, const std::string style, int strength, int cost) override
-  {
-    std::cout << "ICreateMagic(" << style << strength << cost << ")" << std::endl;
-  }
-  void fire(IDestroyMagic * /*self*/) override
-  {
-    std::cout << "IDestroyMagic" << std::endl;
-  }
 
   void create_map();
-  void create_attack();
   void destroy_attack();
   void run();
   void toggle_menu()
@@ -95,12 +70,13 @@ private:
   }
 
 private:
+  friend class CreateAttack;
   YSortCameraGroup visible_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> obstacle_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> attackable_sprites;
   std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
-  // std::shared_ptr<Weapon> current_attack;
+  std::shared_ptr<SpriteTexture> current_attack;
   UI ui;
   std::shared_ptr<Upgrade> upgrade;
   std::shared_ptr<AnimationPlayer> animation_player;

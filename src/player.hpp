@@ -16,12 +16,7 @@ class Player : public Entity
 {
 public:
   Player(const sf::Vector2f &pos,
-         const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
-         ICreateAttack *create_attack,
-         IDestroyAttack *destroy_attack,
-         ICreateMagic *create_magic,
-         IDestroyMagic *destroy_magic,
-         IDamagePlayer *damage_player);
+         const std::vector<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack);
 
   void update() override;
   const int health() { return this->health_; }
@@ -57,17 +52,21 @@ public:
     this->upgrade_cost_[key] = value;
   }
 
-    int get_full_weapon_damage() {
-        auto base_damage = this->stats_["attack"];
-        auto weapon_damage = WEAPON_DATA[this->weapon].damage;
-        return base_damage + weapon_damage;
-    }
+  const std::string &status() { return this->status_; }
+  const std::string &weapon() { return this->weapon_; }
+  int get_full_weapon_damage()
+  {
+    auto base_damage = this->stats_["attack"];
+    auto weapon_damage = WEAPON_DATA[this->weapon_].damage;
+    return base_damage + weapon_damage;
+  }
 
-    int get_full_magic_damage() {
-        auto base_damage = this->stats_["attack"];
-        auto magic_damage = MAGIC_DATA[this->magic].strength;
-        return base_damage + magic_damage;
-    }
+  int get_full_magic_damage()
+  {
+    auto base_damage = this->stats_["attack"];
+    auto magic_damage = MAGIC_DATA[this->magic].strength;
+    return base_damage + magic_damage;
+  }
 
 private:
   void import_player_assets();
@@ -90,14 +89,10 @@ private:
   }
 
 private:
-  ICreateAttack *create_attack;
-  IDestroyAttack *destroy_attack;
-  ICreateMagic *create_magic;
-  IDestroyMagic *destroy_magic;
-  IDamagePlayer *damage_player;
+  std::shared_ptr<ICommand> create_attack;
 
 private:
-  std::string status;
+  std::string status_;
   int speed;
   bool attacking;
   sf::Time attack_cooldown;
@@ -105,7 +100,7 @@ private:
   // create_attack;
   // destroy_attack;
   int weapon_index_;
-  std::string weapon;
+  std::string weapon_;
   bool can_switch_weapon_;
   sf::Clock weapon_switch_time;
   sf::Clock magic_switch_time;

@@ -3,6 +3,7 @@
 #include "support.hpp"
 #include "tile.hpp"
 #include "enemy.hpp"
+#include "weapon.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <cassert>
@@ -82,11 +83,7 @@ void Level::create_map()
             this->player = std::make_shared<Player>(
                 sf::Vector2f(x, y),
                 this->obstacle_sprites,
-                this,
-                this,
-                this,
-                this,
-                this);
+                std::make_shared<CreateAttack>(*this));
             this->upgrade = std::make_shared<Upgrade>(this->player);
             this->visible_sprites.push_back(this->player);
           }
@@ -130,8 +127,12 @@ void Level::create_map()
   }
 #endif
 }
-void Level::create_attack() {}
-void Level::destroy_attack() {}
+void Level::destroy_attack() {
+  if (this->current_attack) {
+    // this->current_attack.kill();
+    this->current_attack = nullptr;
+  }
+}
 void Level::run()
 {
   this->visible_sprites.custom_draw(player);
@@ -157,7 +158,7 @@ void Level::player_attack_logic() {
         auto rect = collision_sprite->rect();
         auto pos = rect.center();
         auto offset = py::Vector2f(0, 75);
-        int range = 3 + (rand() % 6);
+        int range = 3 + (rand() % 4); // 3 ~ 6
         for (auto i = 0; i < range; ++i) {
           auto particle = this->animation_player->create_grass_particles(pos - offset);
           this->visible_sprites.push_back(particle);
@@ -239,3 +240,20 @@ void YSortCameraGroup::update()
     sprite->update();
   }
 }
+
+
+
+
+class CreateAttack : public ICommand {
+public:
+CreateAttack(Level& level) : level(level) {
+
+}
+void invoke() override {
+  level.current_attack = std::make_shared<Weapon>(level.player);
+  level.visible_sprites.push_back(level.current_attack);
+  level.attack_sprites.push_back(level.current_attack);
+}
+private:
+Level& level;
+};
