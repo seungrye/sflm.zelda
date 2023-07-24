@@ -13,6 +13,7 @@ add_executable(sfmlZelda
     src/support.cpp
     src/enemy.cpp
     src/upgrade.cpp
+    src/entity.cpp
     src/pygame_adapter.cpp
     src/tile.cpp)
 

@@ -62,7 +62,7 @@ void Level::create_map()
         }
         else if (!style.compare("grass"))
         {
-          auto grass = this->random_choice(graphics["grass"]);
+          auto grass = this->random_choice<std::vector<std::shared_ptr<SpriteTexture>>>(graphics["grass"]);
           auto tile = std::make_shared<Tile>(sf::Vector2f(x, y), "grass", *grass);
           this->visible_sprites.push_back(tile);
           this->obstacle_sprites.push_back(tile);
@@ -248,6 +248,18 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   }
 
   GameWindow::instance().screen().display();
+}
+
+void YSortCameraGroup::enemy_update(std::shared_ptr<Player> player)
+{
+  for (const auto &sprite : this->sprites)
+  {
+    if (sprite->is("enemy"))
+    {
+      auto enemy = std::dynamic_pointer_cast<Enemy>(sprite);
+      enemy->enemy_update(player);
+    }
+  }
 }
 
 void YSortCameraGroup::update()

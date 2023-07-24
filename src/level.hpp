@@ -24,19 +24,9 @@ public:
   YSortCameraGroup();
   void custom_draw(std::shared_ptr<Player> player);
   void update();
-  void enemy_update(std::shared_ptr<Player> player)
-  {
-    for (const auto &sprite : this->sprites)
-    {
-      if (sprite->is("enemy"))
-      {
-        auto enemy = std::dynamic_pointer_cast<Enemy>(sprite);
-        enemy->enemy_update(player);
-      }
-    }
-  }
+  void enemy_update(std::shared_ptr<Player> player);
   void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
-  void remove(const std::shared_ptr<SpriteTexture>& __x) { this->sprites.remove(__x); }
+  void remove(const std::shared_ptr<SpriteTexture> &__x) { this->sprites.remove(__x); }
 
 private:
   unsigned half_width;
@@ -57,19 +47,13 @@ public:
   void create_map();
   void destroy_attack();
   void run();
-  void toggle_menu()
-  {
-    this->game_paused = !this->game_paused;
-    // std::cout<<"toggle menu called"<<std::endl;
-  }
+  void toggle_menu() { this->game_paused = !this->game_paused; }
 
 private:
   void player_attack_logic();
 
-  auto random_choice(const std::vector<std::shared_ptr<SpriteTexture>> &list)
-  {
-    return list[random() % list.size()];
-  }
+  template <typename T>
+  auto random_choice(const T &list) { return list[random() % list.size()]; }
 
 private:
   friend class CreateAttack;
