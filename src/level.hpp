@@ -10,9 +10,8 @@
 #include "magic.hpp"
 #include "particles.hpp"
 #include "upgrade.hpp"
-#include "actions.hpp"
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 #include <memory>
 #include <vector>
 #include <iostream>
@@ -37,8 +36,6 @@ private:
   std::list<std::shared_ptr<SpriteTexture>> sprites;
 };
 
-class CreateAttack;
-
 class Level
 {
 public:
@@ -56,7 +53,10 @@ private:
   auto random_choice(const T &list) { return list[random() % list.size()]; }
 
 private:
-  friend class CreateAttack;
+  void create_attack();
+  void damage_player(int amount, const std::string& attack_type);
+
+private:  
   YSortCameraGroup visible_sprites;
   std::list<std::shared_ptr<SpriteTexture>> obstacle_sprites;
   std::list<std::shared_ptr<SpriteTexture>> attackable_sprites;

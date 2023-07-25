@@ -6,8 +6,8 @@
 #include "entity.hpp"
 #include "player.hpp"
 #include <SFML/Graphics.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
 #include <map>
 #include <memory>
 
@@ -50,9 +50,15 @@ private:
     bool vulernable;
     sf::Clock hit_time;
     sf::Time invincibility_duration;
-    // death_sound
-    // hit_sound
-    // attack_sound;
+
+    sf::SoundBuffer death_sound_buffer;
+    sf::Sound death_sound;
+
+    sf::SoundBuffer hit_sound_buffer;
+    sf::Sound hit_sound;
+
+    sf::SoundBuffer attack_sound_buffer;
+    sf::Sound attack_sound;
 };
 
 #endif /* __ENEMY_HPP__ */

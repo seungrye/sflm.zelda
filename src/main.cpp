@@ -17,12 +17,12 @@ public:
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(FPS);
 
-    // sound
-    sf::Music music;
-    auto r = music.openFromFile("./src/audio/main.ogg");
-    assert(r);
-    music.setLoop(true);
-    music.play();
+    // // sound
+    // sf::Music music;
+    // auto r = music.openFromFile("./src/audio/main.ogg");
+    // assert(r);
+    // music.setLoop(true);
+    // music.play();
 
     while (window.isOpen()) {
       sf::Event event;

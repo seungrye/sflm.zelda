@@ -13,9 +13,12 @@
 #include <memory>
 #include <sstream>
 #include <vector>
+#include <functional>
 
 Player::Player(const sf::Vector2f &pos,
-               const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites, std::shared_ptr<ICommand> create_attack)
+               const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+               const std::function<void()> &create_attack,
+               const std::function<void(int, const std::string &)> &damage_player)
     : Entity(0, 0.15f, {0, 0}, obstacle_sprites),
       status_("down"),
       speed(5),
@@ -26,8 +29,10 @@ Player::Player(const sf::Vector2f &pos,
       can_switch_weapon_(true),
       switch_duration_cooldown(sf::milliseconds(200)),
       can_switch_magic_(true),
-      vulernable(true),
-      invincibility_duration(sf::milliseconds(300)), create_attack(create_attack)
+      vulernable_(true),
+      invincibility_duration(sf::milliseconds(300)),
+      create_attack(create_attack),
+      damage_player_(damage_player)
 {
   auto r = this->loadFromFile("./src/graphics/player.png");
   assert(r);
@@ -45,6 +50,10 @@ Player::Player(const sf::Vector2f &pos,
   this->health_ = this->stats_["health"];
   this->energy_ = this->stats_["energy"];
   this->exp_ = 0;
+
+  this->weapon_attacks_sound_buffer.loadFromFile("./src/audio/sword.wav");
+  this->weapon_attacks_sound.setBuffer(this->weapon_attacks_sound_buffer);
+  this->weapon_attacks_sound.setVolume(10);
 }
 
 void Player::import_player_assets()
@@ -96,8 +105,8 @@ void Player::input()
   {
     this->attacking = true;
     this->attack_time.restart();
-    this->create_attack->invoke();
-    // this->weapon_attacks_sound.play();
+    this->create_attack();
+    this->weapon_attacks_sound.play();
   }
 
   // magic
@@ -168,11 +177,11 @@ void Player::cooldowns()
     }
   }
 
-  if (!this->vulernable)
+  if (!this->vulernable_)
   {
     if (this->hurt_time.getElapsedTime() > this->invincibility_duration)
     {
-      this->vulernable = true;
+      this->vulernable_ = true;
     }
   }
 }
@@ -236,7 +245,7 @@ void Player::animate()
   this->update_sprite(animation[static_cast<int>(this->frame_index)]);
   this->get_rect({"center", this->hitbox_.center()});
 
-  if (!this->vulernable)
+  if (!this->vulernable_)
   { // make flicker
     auto alpha = this->wave_value();
     this->sprite_.setColor(sf::Color(0xff, 0xff, 0xff, alpha));
@@ -254,4 +263,30 @@ void Player::update()
   this->animate();
   this->move(this->stats_["speed"]);
   this->energy_recovery();
+}
+
+int Player::get_full_weapon_damage()
+{
+  auto base_damage = this->stats_["attack"];
+  auto weapon_damage = WEAPON_DATA[this->weapon_].damage;
+  return base_damage + weapon_damage;
+}
+
+int Player::get_full_magic_damage()
+{
+  auto base_damage = this->stats_["attack"];
+  auto magic_damage = MAGIC_DATA[this->magic].strength;
+  return base_damage + magic_damage;
+}
+
+void Player::energy_recovery()
+{
+  if (this->energy_ <= this->stats_["energy"])
+  {
+    this->energy_ += 0.01 * this->stats_["magic"];
+  }
+  else
+  {
+    this->energy_ = this->stats_["energy"];
+  }
 }

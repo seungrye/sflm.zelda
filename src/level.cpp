@@ -82,7 +82,10 @@ void Level::create_map()
             this->player = std::make_shared<Player>(
                 sf::Vector2f(x, y),
                 this->obstacle_sprites,
-                std::make_shared<CreateAttack>(*this));
+                [this]() -> void
+                { this->create_attack(); },
+                [this](int amount, const std::string& attack_type) -> void
+                { this->damage_player(amount, attack_type); });
             this->upgrade = std::make_shared<Upgrade>(this->player);
             this->visible_sprites.push_back(this->player);
           }
@@ -184,6 +187,25 @@ void Level::player_attack_logic()
   }
 }
 
+void Level::create_attack()
+{
+  this->current_attack = std::make_shared<Weapon>(this->player);
+  this->visible_sprites.push_back(this->current_attack);
+  this->attack_sprites.push_back(this->current_attack);
+}
+
+void Level::damage_player(int amount, const std::string& attack_type)
+{
+  if (this->player->vulernable()) {
+    this->player->health(this->player->health() - amount);
+    this->player->vulernable(false);
+    auto rect = this->player->rect();
+    auto pos = rect.center();
+    auto sprite = this->animation_player->create_particles(pos, attack_type);
+    this->visible_sprites.push_back(sprite);
+  }
+}
+
 YSortCameraGroup::YSortCameraGroup()
 {
   auto &rnderer = GameWindow::instance();
@@ -269,20 +291,3 @@ void YSortCameraGroup::update()
     sprite->update();
   }
 }
-
-class CreateAttack : public ICommand
-{
-public:
-  CreateAttack(Level &level) : level(level)
-  {
-  }
-  void invoke() override
-  {
-    level.current_attack = std::make_shared<Weapon>(level.player);
-    level.visible_sprites.push_back(level.current_attack);
-    level.attack_sprites.push_back(level.current_attack);
-  }
-
-private:
-  Level &level;
-};

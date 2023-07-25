@@ -34,9 +34,17 @@ Enemy::Enemy(const std::string &monster_name, const sf::Vector2f &pos,
     this->attack_radius = monster_info->second.attack_radius;
     this->notice_radius = monster_info->second.notice_radius;
 
-    // this->death_sound = ;
-    // this->hit_sound = ;
-    // this->attack_sound = ;
+    this->death_sound_buffer.loadFromFile("./src/audio/hit.wav");
+    this->death_sound.setBuffer(this->death_sound_buffer);
+    this->death_sound.setVolume(10);
+
+    this->hit_sound_buffer.loadFromFile("./src/audio/hit.wav");
+    this->hit_sound.setBuffer(this->hit_sound_buffer);
+    this->hit_sound.setVolume(10);
+
+    this->attack_sound_buffer.loadFromFile(monster_info->second.attack_sound);
+    this->attack_sound.setBuffer(this->attack_sound_buffer);
+    this->attack_sound.setVolume(10);
 }
 
 void Enemy::import_graphics(const std::string &monster_name)
@@ -83,9 +91,9 @@ void Enemy::actions(std::shared_ptr<Player> player)
 {
     if (!this->status.compare("attack"))
     {
-        // this->attack_sound.play();
+        this->attack_sound.play();
         this->attack_time.restart();
-        // player->damage_player(this->damage, this->attack_type);
+        player->damage_player(this->damage, this->attack_type);
     }
     else if (!this->status.compare("move"))
     {
@@ -144,7 +152,7 @@ void Enemy::get_damage(std::shared_ptr<Player> player, const std::string &attack
 {
     if (this->vulernable)
     {
-        // this->hit_sound.play();
+        this->hit_sound.play();
         this->direction = this->get_player_distance_direction(player).second;
         if (!attack_type.compare("weapon"))
         {
@@ -172,7 +180,7 @@ void Enemy::check_death()
 {
     if (this->health <= 0)
     {
-        // this->death_sound.play();
+        this->death_sound.play();
         // this->trigger_death_particles(this->rect_.center(), this->monster_name);
         // this->kill(); // remove the Sprite from all Groups
         // this->add_exp(this->exp);
