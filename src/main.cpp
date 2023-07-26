@@ -18,11 +18,12 @@ public:
     window.setFramerateLimit(FPS);
 
     // // sound
-    // sf::Music music;
-    // auto r = music.openFromFile("./src/audio/main.ogg");
-    // assert(r);
-    // music.setLoop(true);
-    // music.play();
+    sf::Music music;
+    auto r = music.openFromFile("./src/audio/main.ogg");
+    assert(r);
+    music.setLoop(true);
+    music.setVolume(20);
+    music.play();
 
     while (window.isOpen()) {
       sf::Event event;

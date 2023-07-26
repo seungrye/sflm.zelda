@@ -17,8 +17,8 @@
 #include <iostream>
 
 Level::Level()
-    : game_paused(false), animation_player(std::make_shared<AnimationPlayer>())
-// magic_player(std::make_shared<MagicPlayer>(this->animation_player))
+    : game_paused(false), animation_player(std::make_shared<AnimationPlayer>()),
+      magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
   this->create_map();
 }
@@ -84,7 +84,19 @@ void Level::create_map()
                 this->obstacle_sprites,
                 [this]() -> void
                 { this->create_attack(); },
-                [this](int amount, const std::string& attack_type) -> void
+                [this]() -> void
+                {
+                  this->destroy_attack();
+                },
+                [this](const std::string &style, int strength, int cost)
+                {
+                  this->create_magic(style, strength, cost);
+                },
+                [this]() -> void
+                {
+                  this->destroy_magic();
+                },
+                [this](int amount, const std::string &attack_type) -> void
                 { this->damage_player(amount, attack_type); });
             this->upgrade = std::make_shared<Upgrade>(this->player);
             this->visible_sprites.push_back(this->player);
@@ -129,6 +141,14 @@ void Level::create_map()
   }
 #endif
 }
+
+void Level::create_attack()
+{
+  this->current_attack = std::make_shared<Weapon>(this->player);
+  this->visible_sprites.push_back(this->current_attack);
+  this->attack_sprites.push_back(this->current_attack);
+}
+
 void Level::destroy_attack()
 {
   if (this->current_attack)
@@ -137,6 +157,32 @@ void Level::destroy_attack()
     this->current_attack = nullptr;
   }
 }
+
+void Level::create_magic(const std::string &style, int strength, int cost)
+{
+  if (!style.compare("heal"))
+  {
+    auto sprites = this->magic_player->heal(this->player, strength, cost);
+    for (const auto &sprite : sprites)
+    {
+      this->visible_sprites.push_back(sprite);
+    }
+  }
+  else if (!style.compare("flame"))
+  {
+    auto sprites = this->magic_player->flame(this->player, cost);
+    for (const auto &sprite : sprites)
+    {
+      this->visible_sprites.push_back(sprite);
+      this->attack_sprites.push_back(sprite);
+    }
+  }
+}
+
+void Level::destroy_magic()
+{
+}
+
 void Level::run()
 {
   this->visible_sprites.custom_draw(player);
@@ -180,23 +226,17 @@ void Level::player_attack_logic()
       }
       else if (!collision_sprite->sprite_type().compare("enemy"))
       {
-        auto enemy = std::dynamic_pointer_cast<Enemy>(collision_sprite);
+        auto enemy = std::static_pointer_cast<Enemy>(collision_sprite);
         enemy->get_damage(this->player, attack_sprite->sprite_type());
       }
     }
   }
 }
 
-void Level::create_attack()
+void Level::damage_player(int amount, const std::string &attack_type)
 {
-  this->current_attack = std::make_shared<Weapon>(this->player);
-  this->visible_sprites.push_back(this->current_attack);
-  this->attack_sprites.push_back(this->current_attack);
-}
-
-void Level::damage_player(int amount, const std::string& attack_type)
-{
-  if (this->player->vulernable()) {
+  if (this->player->vulernable())
+  {
     this->player->health(this->player->health() - amount);
     this->player->vulernable(false);
     auto rect = this->player->rect();
@@ -278,7 +318,7 @@ void YSortCameraGroup::enemy_update(std::shared_ptr<Player> player)
   {
     if (sprite->is("enemy"))
     {
-      auto enemy = std::dynamic_pointer_cast<Enemy>(sprite);
+      auto enemy = std::static_pointer_cast<Enemy>(sprite);
       enemy->enemy_update(player);
     }
   }

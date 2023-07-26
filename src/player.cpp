@@ -18,6 +18,9 @@
 Player::Player(const sf::Vector2f &pos,
                const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
                const std::function<void()> &create_attack,
+               const std::function<void()> &destroy_attack,
+               const std::function<void(const std::string &, int, int)> &create_magic,
+               const std::function<void()> &destroy_magic,
                const std::function<void(int, const std::string &)> &damage_player)
     : Entity(0, 0.15f, {0, 0}, obstacle_sprites),
       status_("down"),
@@ -32,6 +35,9 @@ Player::Player(const sf::Vector2f &pos,
       vulernable_(true),
       invincibility_duration(sf::milliseconds(300)),
       create_attack(create_attack),
+      destroy_attack(destroy_attack),
+      create_magic(create_magic),
+      destroy_magic(destroy_magic),
       damage_player_(damage_player)
 {
   auto r = this->loadFromFile("./src/graphics/player.png");
@@ -115,10 +121,9 @@ void Player::input()
     this->attacking = true;
     this->attack_time.restart();
     auto magic_data = MAGIC_DATA[this->magic];
-    // this->create_magic->fire(this->create_magic,
-    //                          this->magic,
-    //                          magic_data.strength,
-    //                          magic_data.cost);
+    this->create_magic(this->magic,
+                       magic_data.strength,
+                       magic_data.cost);
   }
 
   // swap weapon
@@ -156,7 +161,7 @@ void Player::cooldowns()
     if (this->attack_time.getElapsedTime() > (this->attack_cooldown + sf::milliseconds(WEAPON_DATA[this->weapon_].cooldown)))
     {
       this->attacking = false;
-      // this->destroy_attack->fire(this->destroy_attack);
+      this->destroy_attack();
       //?? destroy_magic 은 언제 어디서 호출되어야 할까?
     }
   }

@@ -19,12 +19,16 @@ public:
   Player(const sf::Vector2f &pos,
          const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
          const std::function<void()> &create_attack,
+         const std::function<void()> &destroy_attack,
+         const std::function<void(const std::string&, int, int)> &create_magic,
+         const std::function<void()> &destroy_magic,
          const std::function<void(int, const std::string &)> &damage_player);
 
   void update() override;
   const int health() { return this->health_; }
   void health(int health) { this->health_ = health; }
   const int energy() { return this->energy_; }
+  void energy(int energy) { this->energy_ = energy; }
   const std::map<std::string, int> &stats() { return this->stats_; }
   void stats(const std::string &key, int value) { this->stats_[key] = value; }
   const std::map<std::string, int> &max_stats() { return this->max_stats_; }
@@ -57,6 +61,9 @@ private:
 
 private:
   std::function<void()> create_attack;
+  std::function<void()> destroy_attack;
+  std::function<void(const std::string&, int, int)> create_magic;
+  std::function<void()> destroy_magic;
   std::function<void(int, const std::string &)> damage_player_;
 
 private:
@@ -65,8 +72,6 @@ private:
   bool attacking;
   sf::Time attack_cooldown;
   sf::Clock attack_time;
-  // create_attack;
-  // destroy_attack;
   int weapon_index_;
   std::string weapon_;
   bool can_switch_weapon_;

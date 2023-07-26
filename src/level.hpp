@@ -42,7 +42,6 @@ public:
   Level();
 
   void create_map();
-  void destroy_attack();
   void run();
   void toggle_menu() { this->game_paused = !this->game_paused; }
 
@@ -54,6 +53,9 @@ private:
 
 private:
   void create_attack();
+  void destroy_attack();
+  void create_magic(const std::string& style, int strength, int cost);
+  void destroy_magic();
   void damage_player(int amount, const std::string& attack_type);
 
 private:  
@@ -66,7 +68,7 @@ private:
   UI ui;
   std::shared_ptr<Upgrade> upgrade;
   std::shared_ptr<AnimationPlayer> animation_player;
-  // std::shared_ptr<MagicPlayer> magic_player;
+  std::shared_ptr<MagicPlayer> magic_player;
 
   bool game_paused;
 };
