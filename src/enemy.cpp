@@ -3,15 +3,18 @@
 #include <experimental/filesystem>
 #include <algorithm>
 
-Enemy::Enemy(const std::string &monster_name, const sf::Vector2f &pos,
-             const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites)
+Enemy::Enemy(const std::string &monster_name,
+             const sf::Vector2f &pos,
+             const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+             DeferredSpriteManager &sprite_manager)
     : status("idle"),
       Entity(0, 0.15, {0, 0}, obstacle_sprites),
       monster_name(monster_name),
       can_attack(true),
       attack_cooldown(sf::milliseconds(400)),
       vulernable(true),
-      invincibility_duration(sf::milliseconds(300))
+      invincibility_duration(sf::milliseconds(300)),
+      sprite_manager(sprite_manager)
 {
     this->sprite_type_ = "enemy";
     this->import_graphics(monster_name);
@@ -182,7 +185,7 @@ void Enemy::check_death()
     {
         this->death_sound.play();
         // this->trigger_death_particles(this->rect_.center(), this->monster_name);
-        // this->kill(); // remove the Sprite from all Groups
+        this->sprite_manager.deferred_kill(this); // remove the Sprite from all Groups
         // this->add_exp(this->exp);
     }
 }

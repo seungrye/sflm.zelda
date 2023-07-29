@@ -5,6 +5,7 @@
 #include "support.hpp"
 #include "entity.hpp"
 #include "player.hpp"
+#include "sprite_manager.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
@@ -14,8 +15,10 @@
 class Enemy : public Entity
 {
 public:
-    Enemy(const std::string &monster_name, const sf::Vector2f &pos,
-          const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites);
+    Enemy(const std::string &monster_name,
+          const sf::Vector2f &pos,
+          const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+          DeferredSpriteManager &sprite_manager);
     void import_graphics(const std::string &monster_name);
     void animate();
     void update() override;
@@ -59,6 +62,8 @@ private:
 
     sf::SoundBuffer attack_sound_buffer;
     sf::Sound attack_sound;
+
+    DeferredSpriteManager &sprite_manager;
 };
 
 #endif /* __ENEMY_HPP__ */

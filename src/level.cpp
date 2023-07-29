@@ -17,7 +17,12 @@
 #include <iostream>
 
 Level::Level()
-    : game_paused(false), animation_player(std::make_shared<AnimationPlayer>()),
+    : game_paused(false),
+      sprite_manager({visible_sprites,
+                      this->obstacle_sprites,
+                      this->attackable_sprites,
+                      this->attack_sprites}),
+      animation_player(std::make_shared<AnimationPlayer>(this->sprite_manager)),
       magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
   this->create_map();
@@ -117,10 +122,11 @@ void Level::create_map()
             }();
             if (!monster_name.empty())
             {
-              auto enemy = std::make_shared<Enemy>(monster_name, sf::Vector2f(x, y), this->obstacle_sprites
+              auto enemy = std::make_shared<Enemy>(monster_name, sf::Vector2f(x, y),
+                                                   this->obstacle_sprites,
                                                    // trigger_death_particles
                                                    // add_xp
-              );
+                                                   this->sprite_manager);
               this->visible_sprites.push_back(enemy);
               this->attackable_sprites.push_back(enemy);
             }
@@ -153,7 +159,7 @@ void Level::destroy_attack()
 {
   if (this->current_attack)
   {
-    // this->current_attack.kill();
+    this->sprite_manager.deferred_kill(this->current_attack);
     this->current_attack = nullptr;
   }
 }
@@ -197,6 +203,7 @@ void Level::run()
     this->visible_sprites.update();
     this->visible_sprites.enemy_update(this->player);
     this->player_attack_logic();
+    this->sprite_manager.kill();
   }
 }
 

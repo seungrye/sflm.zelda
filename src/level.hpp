@@ -10,31 +10,14 @@
 #include "magic.hpp"
 #include "particles.hpp"
 #include "upgrade.hpp"
+#include "sprite_manager.hpp"
+#include "ysort_camera_group.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <memory>
 #include <vector>
 #include <iostream>
 #include <list>
-
-class YSortCameraGroup
-{
-public:
-  YSortCameraGroup();
-  void custom_draw(std::shared_ptr<Player> player);
-  void update();
-  void enemy_update(std::shared_ptr<Player> player);
-  void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
-  void remove(const std::shared_ptr<SpriteTexture> &__x) { this->sprites.remove(__x); }
-
-private:
-  unsigned half_width;
-  unsigned half_height;
-  sf::Vector2f offset;
-
-  SpriteTexture floor;
-  std::list<std::shared_ptr<SpriteTexture>> sprites;
-};
 
 class Level
 {
@@ -54,21 +37,23 @@ private:
 private:
   void create_attack();
   void destroy_attack();
-  void create_magic(const std::string& style, int strength, int cost);
+  void create_magic(const std::string &style, int strength, int cost);
   void destroy_magic();
-  void damage_player(int amount, const std::string& attack_type);
+  void damage_player(int amount, const std::string &attack_type);
 
-private:  
+private:
   YSortCameraGroup visible_sprites;
   std::list<std::shared_ptr<SpriteTexture>> obstacle_sprites;
   std::list<std::shared_ptr<SpriteTexture>> attackable_sprites;
-  std::vector<std::shared_ptr<SpriteTexture>> attack_sprites;
+  std::list<std::shared_ptr<SpriteTexture>> attack_sprites;
   std::shared_ptr<Player> player;
   std::shared_ptr<SpriteTexture> current_attack;
   UI ui;
   std::shared_ptr<Upgrade> upgrade;
   std::shared_ptr<AnimationPlayer> animation_player;
   std::shared_ptr<MagicPlayer> magic_player;
+
+  SpriteManager sprite_manager;
 
   bool game_paused;
 };

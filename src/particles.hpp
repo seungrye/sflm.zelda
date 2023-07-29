@@ -2,6 +2,7 @@
 #define __PARTICLES_HPP__
 
 #include "support.hpp"
+#include "sprite_manager.hpp"
 
 class ParticleEffect : public SpriteTexture
 {
@@ -27,7 +28,8 @@ public:
      *   std::vector<std::shared_ptr<SpriteTexture>> spriteFrames = {frame1, frame2, frame3};
      *   ParticleEffect particleEffect(position, spriteFrames);
      */
-    ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames)
+    ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames, DeferredSpriteManager &sprite_manager)
+        : sprite_manager(sprite_manager)
     {
         // 스프라이트 프레임 목록 내의 각 스프라이트를 복제하여 새로운 스프라이트 목록(frames)에 추가합니다.
         for (const auto &frame : sprite_frames)
@@ -50,7 +52,7 @@ public:
         if (this->frame_index >= static_cast<float>(this->frames.size()))
         {
             this->frame_index = 0.f;
-            // this->kill();
+            this->sprite_manager.deferred_kill(this);
         }
         else
         {
@@ -92,13 +94,16 @@ private:
     float frame_index;
     float animation_speed;
     std::vector<std::shared_ptr<SpriteTexture>> frames;
+    DeferredSpriteManager &sprite_manager;
 };
 
-class AnimationPlayer
+class AnimationPlayer            // this->kill();
+
 {
 public:
-    AnimationPlayer()
-        : frames(
+    AnimationPlayer(DeferredSpriteManager &sprite_manager)
+        : sprite_manager(sprite_manager),
+          frames(
               {// magic
                {"flame", import_folder("./src/graphics/particles/flame/frames")},
                {"aura", import_folder("./src/graphics/particles/aura")},
@@ -138,13 +143,13 @@ public:
     std::shared_ptr<SpriteTexture> create_grass_particles(const py::Vector2f &pos)
     {
         auto animation_frames = this->random_choice<std::vector<std::shared_ptr<SpriteTexture>>>(this->leaf_frames);
-        return std::make_shared<ParticleEffect>(pos, animation_frames);
+        return std::make_shared<ParticleEffect>(pos, animation_frames, this->sprite_manager);
     }
 
     std::shared_ptr<SpriteTexture> create_particles(const py::Vector2f &pos, const std::string &attack_type)
     {
         auto animation_frames = this->frames[attack_type];
-        return std::make_shared<ParticleEffect>(pos, animation_frames);
+        return std::make_shared<ParticleEffect>(pos, animation_frames, this->sprite_manager);
     }
 
 private:
@@ -169,6 +174,7 @@ private:
 private:
     std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> frames;
     std::vector<std::vector<std::shared_ptr<SpriteTexture>>> leaf_frames;
+    DeferredSpriteManager &sprite_manager;
 };
 
 #endif /* __PARTICLES_HPP__ */
