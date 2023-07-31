@@ -14,7 +14,7 @@ class UI
 public:
     UI()
         : health_bar_rect(10, 10, HEALTH_BAR_WIDTH, BAR_HEIGHT),
-          energy_bar_rect(10, 15 + BAR_HEIGHT, ENERGY_BAR_WIDTH, BAR_HEIGHT)
+          energy_bar_rect(10, 20 + BAR_HEIGHT, ENERGY_BAR_WIDTH, BAR_HEIGHT)
     {
         auto r = this->font.loadFromFile(UI_FONT);
         assert(r);
@@ -89,7 +89,7 @@ private:
     {
         sf::RenderTexture &renderTexture = GameWindow::instance().screen();
 
-        auto bg_rect = this->selection_box(80, 550, has_switched);
+        auto bg_rect = this->selection_box(80, 560, has_switched);
         auto magic_sprite = this->magic_graphics[magic_index];
         magic_sprite->set_position({"center", bg_rect.center()});
 
@@ -125,7 +125,7 @@ private:
         renderTexture.draw(border);
     }
 
-    void show_bar(int current, int max_amount, const py::Rect<float> &bg_rect, const sf::Color &color)
+    void show_bar(float current, float max_amount, const py::Rect<float> &bg_rect, const sf::Color &color)
     {
         sf::RenderTexture &renderTexture = GameWindow::instance().screen();
 

@@ -11,6 +11,7 @@
 #include <SFML/Audio.hpp>
 #include <map>
 #include <memory>
+#include <functional>
 
 class Enemy : public Entity
 {
@@ -18,6 +19,8 @@ public:
     Enemy(const std::string &monster_name,
           const sf::Vector2f &pos,
           const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+          const std::function<void(const sf::Vector2f, const std::string &)> &trigger_death_particles,
+          const std::function<void(int)> &add_exp,
           DeferredSpriteManager &sprite_manager);
     void import_graphics(const std::string &monster_name);
     void animate();
@@ -33,6 +36,10 @@ private:
     std::pair<float, py::Vector2f> get_player_distance_direction(std::shared_ptr<Player> player);
     void get_status(std::shared_ptr<Player> player);
     void update_sprite(std::shared_ptr<SpriteTexture> sprite);
+
+private:
+    std::function<void(const sf::Vector2f, const std::string &)> trigger_death_particles;
+    std::function<void(int)> add_exp;
 
 private:
     std::string status;

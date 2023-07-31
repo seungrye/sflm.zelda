@@ -97,8 +97,7 @@ private:
     DeferredSpriteManager &sprite_manager;
 };
 
-class AnimationPlayer            // this->kill();
-
+class AnimationPlayer
 {
 public:
     AnimationPlayer(DeferredSpriteManager &sprite_manager)

@@ -122,11 +122,18 @@ void Level::create_map()
             }();
             if (!monster_name.empty())
             {
-              auto enemy = std::make_shared<Enemy>(monster_name, sf::Vector2f(x, y),
-                                                   this->obstacle_sprites,
-                                                   // trigger_death_particles
-                                                   // add_xp
-                                                   this->sprite_manager);
+              auto enemy = std::make_shared<Enemy>(
+                  monster_name, sf::Vector2f(x, y),
+                  this->obstacle_sprites,
+                  [this](const sf::Vector2f &pos, const std::string &monster_name)
+                  {
+                    this->trigger_death_particles(pos, monster_name);
+                  },
+                  [this](int exp)
+                  {
+                    this->add_exp(exp);
+                  },
+                  this->sprite_manager);
               this->visible_sprites.push_back(enemy);
               this->attackable_sprites.push_back(enemy);
             }
@@ -138,14 +145,17 @@ void Level::create_map()
       row_index++;
     }
   }
+}
 
-#if false
-  for (const auto& object: this->obstacle_sprites) {
-    std::cout<<"(l,t) : ("<<object->hitbox().left<<",\t"<<object->hitbox().top<<")"
-             <<"(r,b) : ("<<object->hitbox().left + object->hitbox().width<<",\t"<<object->hitbox().top+object->hitbox().height<<")"
-             <<std::endl;
-  }
-#endif
+void Level::trigger_death_particles(const sf::Vector2f &pos, const std::string &particle_type)
+{
+  auto sprite = this->animation_player->create_particles(pos, particle_type);
+  this->visible_sprites.push_back(sprite);
+}
+
+void Level::add_exp(int amount)
+{
+  this->player->exp(this->player->exp() + amount);
 }
 
 void Level::create_attack()
@@ -226,10 +236,7 @@ void Level::player_attack_logic()
           this->visible_sprites.push_back(particle);
         }
 
-        // WIP: remove collision_sprite from attackable_sprites
-        this->attackable_sprites.remove(collision_sprite);
-        this->visible_sprites.remove(collision_sprite);
-        this->obstacle_sprites.remove(collision_sprite);
+        this->sprite_manager.deferred_kill(collision_sprite);
       }
       else if (!collision_sprite->sprite_type().compare("enemy"))
       {
@@ -246,6 +253,7 @@ void Level::damage_player(int amount, const std::string &attack_type)
   {
     this->player->health(this->player->health() - amount);
     this->player->vulernable(false);
+    this->player->restart_hurt_time();
     auto rect = this->player->rect();
     auto pos = rect.center();
     auto sprite = this->animation_player->create_particles(pos, attack_type);
@@ -275,11 +283,6 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   this->floor.set_origin(floor_offset_pos);
   GameWindow::instance().screen().draw(this->floor.surf());
 
-  // std::sort(std::begin(this->sprites), std::end(this->sprites),
-  //           [](auto a, auto b) -> bool
-  //           {
-  //             return a->rect().centery < b->rect().centery;
-  //           });
   this->sprites.sort(
       [](auto a, auto b) -> bool
       {
@@ -292,28 +295,26 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
     sprite->set_origin(offset_rect);
     GameWindow::instance().screen().draw(sprite->surf());
 
-    // draw hitbox (for debugging)
-    do
-    {
-      sf::RectangleShape rectangle;
-      rectangle.setSize(sf::Vector2f(sprite->rect().getSize()));
-      rectangle.setOutlineColor(sf::Color::Blue);
-      rectangle.setOutlineThickness(5);
-      rectangle.setFillColor(sf::Color::Transparent);
-      rectangle.setPosition(sf::Vector2f(sprite->rect().getPosition()));
-      rectangle.setOrigin(-floor_offset_pos);
+#if 1 // draw hitbox (for debugging)
+    sf::RectangleShape rectangle;
+    rectangle.setSize(sf::Vector2f(sprite->rect().getSize()));
+    rectangle.setOutlineColor(sf::Color::Blue);
+    rectangle.setOutlineThickness(5);
+    rectangle.setFillColor(sf::Color::Transparent);
+    rectangle.setPosition(sf::Vector2f(sprite->rect().getPosition()));
+    rectangle.setOrigin(-floor_offset_pos);
 
-      sf::RectangleShape hitbox;
-      hitbox.setSize(sf::Vector2f(sprite->hitbox().getSize()));
-      hitbox.setOutlineColor(sf::Color::Red);
-      hitbox.setOutlineThickness(3);
-      hitbox.setFillColor(sf::Color::Transparent);
-      hitbox.setPosition(sf::Vector2f(sprite->hitbox().getPosition()));
-      hitbox.setOrigin(-floor_offset_pos);
+    sf::RectangleShape hitbox;
+    hitbox.setSize(sf::Vector2f(sprite->hitbox().getSize()));
+    hitbox.setOutlineColor(sf::Color::Red);
+    hitbox.setOutlineThickness(3);
+    hitbox.setFillColor(sf::Color::Transparent);
+    hitbox.setPosition(sf::Vector2f(sprite->hitbox().getPosition()));
+    hitbox.setOrigin(-floor_offset_pos);
 
-      GameWindow::instance().screen().draw(rectangle);
-      GameWindow::instance().screen().draw(hitbox);
-    } while (false);
+    GameWindow::instance().screen().draw(rectangle);
+    GameWindow::instance().screen().draw(hitbox);
+#endif
   }
 
   GameWindow::instance().screen().display();

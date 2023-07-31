@@ -28,21 +28,21 @@ std::map<std::string, MonsterData> MONSTER_DATA = {
     {"spirit", MonsterData{.health = 100, .exp = 110, .damage = 8, .attack_type = "thunder", .attack_sound = "./src/audio/attack/fireball.wav", .speed = 4, .resistance = 3, .attack_radius = 60, .notice_radius = 350}},
     {"bamboo", MonsterData{.health = 70, .exp = 120, .damage = 6, .attack_type = "leaf_attack", .attack_sound = "./src/audio/attack/slash.wav", .speed = 3, .resistance = 3, .attack_radius = 50, .notice_radius = 300}}};
 
-std::map<std::string, int> PLAYER_STATS = {
+std::map<std::string, float> PLAYER_STATS = {
     {"health", 100},
     {"energy", 60},
     {"attack", 10},
     {"magic", 4},
     {"speed", 6}};
 
-std::map<std::string, int> PLAYER_MAX_STATS = {
+std::map<std::string, float> PLAYER_MAX_STATS = {
     {"health", 300},
     {"energy", 140},
     {"attack", 20},
     {"magic", 10},
     {"speed", 12}};
 
-std::map<std::string, int> UPGRADE_COST = {
+std::map<std::string, float> UPGRADE_COST = {
     {"health", 100},
     {"energy", 100},
     {"attack", 100},

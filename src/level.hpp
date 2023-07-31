@@ -40,6 +40,8 @@ private:
   void create_magic(const std::string &style, int strength, int cost);
   void destroy_magic();
   void damage_player(int amount, const std::string &attack_type);
+  void trigger_death_particles(const sf::Vector2f &pos, const std::string &particle_type);
+  void add_exp(int amount);
 
 private:
   YSortCameraGroup visible_sprites;

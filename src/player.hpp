@@ -20,18 +20,18 @@ public:
          const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
          const std::function<void()> &create_attack,
          const std::function<void()> &destroy_attack,
-         const std::function<void(const std::string&, int, int)> &create_magic,
+         const std::function<void(const std::string &, int, int)> &create_magic,
          const std::function<void()> &destroy_magic,
          const std::function<void(int, const std::string &)> &damage_player);
 
   void update() override;
-  const int health() { return this->health_; }
-  void health(int health) { this->health_ = health; }
-  const int energy() { return this->energy_; }
-  void energy(int energy) { this->energy_ = energy; }
-  const std::map<std::string, int> &stats() { return this->stats_; }
-  void stats(const std::string &key, int value) { this->stats_[key] = value; }
-  const std::map<std::string, int> &max_stats() { return this->max_stats_; }
+  const float health() { return this->health_; }
+  void health(float health) { this->health_ = health >= 0.f ? health : 0.f; }
+  const float energy() { return this->energy_; }
+  void energy(float energy) { this->energy_ = energy >= 0.f ? energy : 0.f; }
+  const std::map<std::string, float> &stats() { return this->stats_; }
+  void stats(const std::string &key, float value) { this->stats_[key] = value; }
+  const std::map<std::string, float> &max_stats() { return this->max_stats_; }
   const int exp() { return this->exp_; }
   const void exp(int exp) { this->exp_ = exp; }
   const int weapon_index() { return this->weapon_index_; }
@@ -40,7 +40,7 @@ public:
   const bool can_switch_magic() { return this->can_switch_magic_; }
   const int get_value_by_index(int index) { return nth_item(this->stats_, index).second; }
   const int get_cost_by_index(int index) { return nth_item(this->upgrade_cost_, index).second; }
-  const std::map<std::string, int> &upgrade_cost() { return this->upgrade_cost_; }
+  const std::map<std::string, float> &upgrade_cost() { return this->upgrade_cost_; }
   void upgrade_cost(const std::string &key, int value) { this->upgrade_cost_[key] = value; }
   const std::string &status() { return this->status_; }
   const std::string &weapon() { return this->weapon_; }
@@ -49,6 +49,7 @@ public:
   bool vulernable() { return this->vulernable_; }
   void vulernable(bool b) { this->vulernable_ = b; }
   void damage_player(int value, const std::string &attack_type) { return damage_player_(value, attack_type); }
+  void restart_hurt_time() { this->hurt_time.restart(); }
 
 private:
   void import_player_assets();
@@ -62,7 +63,7 @@ private:
 private:
   std::function<void()> create_attack;
   std::function<void()> destroy_attack;
-  std::function<void(const std::string&, int, int)> create_magic;
+  std::function<void(const std::string &, int, int)> create_magic;
   std::function<void()> destroy_magic;
   std::function<void(int, const std::string &)> damage_player_;
 
@@ -89,12 +90,12 @@ private:
 
   std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> animations;
 
-  std::map<std::string, int> stats_;
-  std::map<std::string, int> max_stats_;
-  std::map<std::string, int> upgrade_cost_;
-  int health_;
-  int energy_;
-  int exp_;
+  std::map<std::string, float> stats_;
+  std::map<std::string, float> max_stats_;
+  std::map<std::string, float> upgrade_cost_;
+  float health_;
+  float energy_;
+  float exp_;
 
   sf::SoundBuffer weapon_attacks_sound_buffer;
   sf::Sound weapon_attacks_sound;

@@ -6,6 +6,8 @@
 Enemy::Enemy(const std::string &monster_name,
              const sf::Vector2f &pos,
              const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
+             const std::function<void(const sf::Vector2f, const std::string &)> &trigger_death_particles,
+             const std::function<void(int)> &add_exp,
              DeferredSpriteManager &sprite_manager)
     : status("idle"),
       Entity(0, 0.15, {0, 0}, obstacle_sprites),
@@ -14,6 +16,8 @@ Enemy::Enemy(const std::string &monster_name,
       attack_cooldown(sf::milliseconds(400)),
       vulernable(true),
       invincibility_duration(sf::milliseconds(300)),
+      trigger_death_particles(trigger_death_particles),
+      add_exp(add_exp),
       sprite_manager(sprite_manager)
 {
     this->sprite_type_ = "enemy";
@@ -184,9 +188,9 @@ void Enemy::check_death()
     if (this->health <= 0)
     {
         this->death_sound.play();
-        // this->trigger_death_particles(this->rect_.center(), this->monster_name);
+        this->trigger_death_particles(this->rect_.center(), this->monster_name);
         this->sprite_manager.deferred_kill(this); // remove the Sprite from all Groups
-        // this->add_exp(this->exp);
+        this->add_exp(this->exp);
     }
 }
 

@@ -14,11 +14,11 @@ public:
     Item(float l, float t, float w, float h, int index, const sf::Text &text)
         : rect_(l, t, w, h), index(index), text(text) {}
     void trigger(std::shared_ptr<Player> player);
-    void display(int selection_num, const std::string &name, int value, int max_value, int cost);
+    void display(int selection_num, const std::string &name, float value, float max_value, int cost);
 
 private:
     void display_name(const std::string& name, int cost, bool selected);
-    void display_bar(int value, int max_value, bool selected);
+    void display_bar(float value, float max_value, bool selected);
 
 private:
     py::Rect<float> rect_;

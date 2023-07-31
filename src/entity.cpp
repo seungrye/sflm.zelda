@@ -1,4 +1,7 @@
 #include "entity.hpp"
+#include <iostream>
+#include <sys/time.h>
+#include <ctime>
 
 Entity::Entity(const float &frame_index,
                const float &animation_speed,
@@ -13,12 +16,13 @@ Entity::Entity(const float &frame_index,
 
 int Entity::wave_value()
 {
-    // see: https://stackoverflow.com/a/69729769
-    static auto n = 0;
-    if (n >= 2500)
-        n = 0;
-    auto value = sin(2 * M_PI * 8.4e-3 * n);
-    if (value > 0)
+    struct timeval time_now;
+    ::gettimeofday(&time_now, nullptr);
+    time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+
+    auto value = sin(msecs_time);
+
+    if (value > 0.f)
         return 255;
     else
         return 0;

@@ -87,8 +87,8 @@ struct MonsterData {
 
 extern std::map<std::string, MonsterData> MONSTER_DATA;
 
-extern std::map<std::string, int> PLAYER_STATS;
-extern std::map<std::string, int> PLAYER_MAX_STATS;
-extern std::map<std::string, int> UPGRADE_COST;
+extern std::map<std::string, float> PLAYER_STATS;
+extern std::map<std::string, float> PLAYER_MAX_STATS;
+extern std::map<std::string, float> UPGRADE_COST;
 
 #endif

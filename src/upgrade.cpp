@@ -113,7 +113,7 @@ void Item::trigger(std::shared_ptr<Player> player)
     auto max_stats = player->max_stats();
     auto upgrade_cost = player->upgrade_cost();
 
-    if (player->exp() > upgrade_cost[upgrade_attribute] && upgrade_cost[upgrade_attribute] < upgrade_cost[upgrade_attribute])
+    if (player->exp() > upgrade_cost[upgrade_attribute] && stats[upgrade_attribute] < max_stats[upgrade_attribute])
     {
         player->exp(player->exp() - upgrade_cost[upgrade_attribute]);
         player->stats(upgrade_attribute, stats[upgrade_attribute] * 1.2);
@@ -127,7 +127,7 @@ void Item::trigger(std::shared_ptr<Player> player)
     }
 }
 
-void Item::display(int selection_num, const std::string &name, int value, int max_value, int cost)
+void Item::display(int selection_num, const std::string &name, float value, float max_value, int cost)
 {
     sf::RenderTexture &renderTexture = GameWindow::instance().screen();
 
@@ -176,7 +176,7 @@ void Item::display_name(const std::string &name, int cost, bool selected)
     renderTexture.draw(this->text);
 }
 
-void Item::display_bar(int value, int max_value, bool selected)
+void Item::display_bar(float value, float max_value, bool selected)
 {
     sf::RenderTexture &renderTexture = GameWindow::instance().screen();
     auto color = (selected) ? BAR_COLOR_SELECTED : BAR_COLOR;
