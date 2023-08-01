@@ -1,0 +1,503 @@
+@startuml
+
+
+
+
+
+/' Objects '/
+
+class AnimationPlayer {
+	+AnimationPlayer(DeferredSpriteManager& sprite_manager)
+	-sprite_manager : DeferredSpriteManager&
+	-random_choice(const std::vector<T>& list) : T&
+	-frames : std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>>
+	+create_grass_particles(const py::Vector2f& pos) : std::shared_ptr<SpriteTexture>
+	+create_particles(const py::Vector2f& pos, const std::string& attack_type) : std::shared_ptr<SpriteTexture>
+	-reflect_images(const std::vector<std::shared_ptr<SpriteTexture>>& frames) : std::vector<std::shared_ptr<SpriteTexture>>
+	-leaf_frames : std::vector<std::vector<std::shared_ptr<SpriteTexture>>>
+}
+
+
+abstract class DeferredSpriteManager {
+	+{abstract} deferred_kill(const SpriteTexture* sprite_texture) : void
+	+{abstract} deferred_kill(const std::shared_ptr<SpriteTexture>& sprite_texture) : void
+}
+
+
+class Enemy {
+	+Enemy(const std::string& monster_name, const sf::Vector2f& pos, const std::list<std::shared_ptr<SpriteTexture>>& obstacle_sprites, const std::function<void ( const sf::Vector2f, const std::string& )>& trigger_death_particles, const std::function<void ( int )>& add_exp, DeferredSpriteManager& sprite_manager)
+	-function<void(const sf::Vector2f, const std::string &)
+	-function<void(int)
+	-sprite_manager : DeferredSpriteManager&
+	-can_attack : bool
+	-vulernable : bool
+	-speed : float
+	-attack_radius : int
+	-damage : int
+	-exp : int
+	-health : int
+	-notice_radius : int
+	-resistance : int
+	-attack_time : sf::Clock
+	-hit_time : sf::Clock
+	-attack_sound : sf::Sound
+	-death_sound : sf::Sound
+	-hit_sound : sf::Sound
+	-attack_sound_buffer : sf::SoundBuffer
+	-death_sound_buffer : sf::SoundBuffer
+	-hit_sound_buffer : sf::SoundBuffer
+	-attack_cooldown : sf::Time
+	-invincibility_duration : sf::Time
+	-animations : std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>>
+	-get_player_distance_direction(std::shared_ptr<Player> player) : std::pair<float , py::Vector2f>
+	-attack_type : std::string
+	-monster_name : std::string
+	-status : std::string
+	-actions(std::shared_ptr<Player> player) : void
+	+animate() : void
+	-check_death() : void
+	-cooldowns() : void
+	+enemy_update(std::shared_ptr<Player> player) : void
+	+get_damage(std::shared_ptr<Player> player, const std::string& attack_type) : void
+	-get_status(std::shared_ptr<Player> player) : void
+	-hit_reaction() : void
+	+import_graphics(const std::string& monster_name) : void
+	+update() : void
+	-update_sprite(std::shared_ptr<SpriteTexture> sprite) : void
+}
+
+
+class Entity {
+	+Entity(const float& frame_index, const float& animation_speed, const py::Vector2f& direction, const std::list<std::shared_ptr<SpriteTexture>>& obstacle_sprites)
+	#obstacle_sprites : const std::list<std::shared_ptr<SpriteTexture>>&
+	#animation_speed : float
+	#frame_index : float
+	+wave_value() : int
+	#direction : py::Vector2f
+	-collision(const std::string& direction) : void
+	+move(float speed) : void
+}
+
+
+class GameWindow {
+	-GameWindow()
+	-~GameWindow()
+	+{static} instance() : GameWindow&
+	-render_texture : sf::RenderTexture
+	+screen() : sf::RenderTexture&
+}
+
+
+class Item {
+	+Item(float l, float t, float w, float h, int index, const sf::Text& text)
+	-index : const int
+	-rect_ : py::Rect<float>
+	-text : sf::Text
+	+display(int selection_num, const std::string& name, float value, float max_value, int cost) : void
+	-display_bar(float value, float max_value, bool selected) : void
+	-display_name(const std::string& name, int cost, bool selected) : void
+	+trigger(std::shared_ptr<Player> player) : void
+}
+
+
+class Level {
+	+Level()
+	-sprite_manager : SpriteManager
+	-ui : UI
+	-visible_sprites : YSortCameraGroup
+	-random_choice(const T& list) : auto
+	-game_paused : bool
+	-attack_sprites : std::list<std::shared_ptr<SpriteTexture>>
+	-attackable_sprites : std::list<std::shared_ptr<SpriteTexture>>
+	-obstacle_sprites : std::list<std::shared_ptr<SpriteTexture>>
+	-animation_player : std::shared_ptr<AnimationPlayer>
+	-magic_player : std::shared_ptr<MagicPlayer>
+	-player : std::shared_ptr<Player>
+	-current_attack : std::shared_ptr<SpriteTexture>
+	-upgrade : std::shared_ptr<Upgrade>
+	-add_exp(int amount) : void
+	-create_attack() : void
+	-create_magic(const std::string& style, int strength, int cost) : void
+	+create_map() : void
+	-damage_player(int amount, const std::string& attack_type) : void
+	-destroy_attack() : void
+	-destroy_magic() : void
+	-player_attack_logic() : void
+	+run() : void
+	+toggle_menu() : void
+	-trigger_death_particles(const sf::Vector2f& pos, const std::string& particle_type) : void
+}
+
+
+class MagicPlayer {
+	+MagicPlayer(const std::shared_ptr<AnimationPlayer>& animation_player)
+	-animation_player : const std::shared_ptr<AnimationPlayer>&
+	-randint(int from, int to) : int
+	-mixer_sound(const std::string& path) : sf::Sound
+	-sounds : std::map<std::string, sf::Sound>
+	-sound_buffers : std::vector<sf::SoundBuffer>
+	+flame(std::shared_ptr<Player> player, int cost) : std::vector<std::shared_ptr<SpriteTexture>>
+	+heal(std::shared_ptr<Player> player, int strength, int cost) : std::vector<std::shared_ptr<SpriteTexture>>
+}
+
+
+class ParticleEffect {
+	+ParticleEffect(const py::Vector2f& pos, const std::vector<std::shared_ptr<SpriteTexture>>& sprite_frames, DeferredSpriteManager& sprite_manager)
+	-sprite_manager : DeferredSpriteManager&
+	-animation_speed : float
+	-frame_index : float
+	-frames : std::vector<std::shared_ptr<SpriteTexture>>
+	+animate() : void
+	+update() : void
+	-update_sprite(std::shared_ptr<SpriteTexture> sprite) : void
+}
+
+
+class Player {
+	+Player(const sf::Vector2f& pos, const std::list<std::shared_ptr<SpriteTexture>>& obstacle_sprites, const std::function<void ( )>& create_attack, const std::function<void ( )>& destroy_attack, const std::function<void ( const std::string&, int, int )>& create_magic, const std::function<void ( )>& destroy_magic, const std::function<void ( int, const std::string& )>& damage_player)
+	-function<void()
+	-function<void()
+	-function<void(const std::string &, int, int)
+	-function<void()
+	-function<void(int, const std::string &)
+	-attacking : bool
+	+can_switch_magic() : bool
+	-can_switch_magic_ : bool
+	+can_switch_weapon() : bool
+	-can_switch_weapon_ : bool
+	+vulernable() : bool
+	-vulernable_ : bool
+	+energy() : float
+	-energy_ : float
+	-exp_ : float
+	+health() : float
+	-health_ : float
+	+exp() : int
+	+get_cost_by_index(int index) : int
+	+get_full_magic_damage() : int
+	+get_full_weapon_damage() : int
+	+get_value_by_index(int index) : int
+	+magic_index() : int
+	-magic_index_ : int
+	-speed : int
+	+weapon_index() : int
+	-weapon_index_ : int
+	-attack_time : sf::Clock
+	-hurt_time : sf::Clock
+	-magic_switch_time : sf::Clock
+	-weapon_switch_time : sf::Clock
+	-weapon_attacks_sound : sf::Sound
+	-weapon_attacks_sound_buffer : sf::SoundBuffer
+	-attack_cooldown : sf::Time
+	-invincibility_duration : sf::Time
+	-switch_duration_cooldown : sf::Time
+	+max_stats() : std::map<std::string , float>&
+	+stats() : std::map<std::string , float>&
+	+upgrade_cost() : std::map<std::string , float>&
+	-max_stats_ : std::map<std::string, float>
+	-stats_ : std::map<std::string, float>
+	-upgrade_cost_ : std::map<std::string, float>
+	-animations : std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>>
+	-magic : std::string
+	-status_ : std::string
+	-weapon_ : std::string
+	+status() : std::string&
+	+weapon() : std::string&
+	-animate() : void
+	-cooldowns() : void
+	+damage_player(int value, const std::string& attack_type) : void
+	+energy(float energy) : void
+	-energy_recovery() : void
+	+exp(int exp) : void
+	-get_status() : void
+	+health(float health) : void
+	-import_player_assets() : void
+	-input() : void
+	+restart_hurt_time() : void
+	+stats(const std::string& key, float value) : void
+	+update() : void
+	-update_sprite(std::shared_ptr<SpriteTexture> sprite) : void
+	+upgrade_cost(const std::string& key, int value) : void
+	+vulernable(bool b) : void
+}
+
+
+class SpriteManager {
+	+SpriteManager(YSortCameraGroup& ysort_camera_group, std::list<std::shared_ptr<SpriteTexture>>& obstacle_sprites, std::list<std::shared_ptr<SpriteTexture>>& attackable_sprites, std::list<std::shared_ptr<SpriteTexture>>& attack_sprites)
+	-ysort_camera_group_ : YSortCameraGroup&
+	-attack_sprites : std::list<std::shared_ptr<SpriteTexture>>&
+	-attackable_sprites : std::list<std::shared_ptr<SpriteTexture>>&
+	-obstacle_sprites : std::list<std::shared_ptr<SpriteTexture>>&
+	-kill_list : std::vector<std::shared_ptr<SpriteTexture>>
+	+deferred_kill(const SpriteTexture* sprite_texture) : void
+	+deferred_kill(const std::shared_ptr<SpriteTexture>& sprite_texture) : void
+	+kill() : void
+}
+
+
+class SpriteTexture {
+	+SpriteTexture()
+	+SpriteTexture(unsigned width, unsigned height)
+	+SpriteTexture(const std::string& path)
+	+SpriteTexture(const sf::Texture& texture)
+	+colliderect(const py::Rect<float>& rect, sf::Rect<float>& intersection) : bool
+	+is(std::string sprite_type) : bool
+	+loadFromFile(const std::string& filename, const sf::IntRect& area) : bool
+	+get_global_bounds() : py::Rect<float>
+	#hitbox_ : py::Rect<float>
+	#rect_ : py::Rect<float>
+	+get_rect(const std::pair<std::string, sf::Vector2f>& pos) : py::Rect<float>&
+	+hitbox() : py::Rect<float>&
+	+rect() : py::Rect<float>&
+	-getTextureRect() : sf::IntRect&
+	#sprite_ : sf::Sprite
+	+surf() : sf::Sprite&
+	+texture_ : std::shared_ptr<sf::Texture>
+	#sprite_type_ : std::string
+	+sprite_type() : std::string&
+	+flip(bool x, bool y) : void
+	+set_origin(const sf::Vector2f& offset) : void
+	+set_position(const std::pair<std::string, sf::Vector2f>& pos) : void
+	+update() : void
+}
+
+
+class Tile {
+	+Tile(const sf::Vector2f& pos, std::string sprite_type)
+	+Tile(const sf::Vector2f& pos, std::string sprite_type, const SpriteTexture& sprite)
+	-init(const sf::Vector2f& pos) : void
+}
+
+
+class UI {
+	+UI()
+	-energy_bar_rect : py::Rect<float>
+	-health_bar_rect : py::Rect<float>
+	-selection_box(float left, float top, bool has_switched) : py::Rect<float>
+	-font : sf::Font
+	-text : sf::Text
+	-magic_graphics : std::vector<std::shared_ptr<SpriteTexture>>
+	-weapon_graphics : std::vector<std::shared_ptr<SpriteTexture>>
+	+display(std::shared_ptr<Player> player) : void
+	-magic_overlay(int magic_index, bool has_switched) : void
+	-show_bar(float current, float max_amount, const py::Rect<float>& bg_rect, const sf::Color& color) : void
+	-show_exp(int exp) : void
+	-weapon_overlay(int weapon_index, bool has_switched) : void
+}
+
+
+class Upgrade {
+	+Upgrade(std::shared_ptr<Player> player)
+	-can_move : bool
+	-height : float
+	-width : float
+	-attribute_number : int
+	-selection_index : int
+	-selection_time : sf::Clock
+	-font : sf::Font
+	-text : sf::Text
+	-player : std::shared_ptr<Player>
+	-item_list : std::vector<Item>
+	-max_values : std::vector<int>
+	-attribute_names : std::vector<std::string>
+	-create_items() : void
+	+display() : void
+	-input() : void
+	-selection_cooldown() : void
+}
+
+
+class Weapon {
+	+Weapon(const std::shared_ptr<Player>& player)
+}
+
+
+class YSortCameraGroup {
+	+YSortCameraGroup()
+	-floor : SpriteTexture
+	-offset : sf::Vector2f
+	-sprites : std::list<std::shared_ptr<SpriteTexture>>
+	-half_height : unsigned
+	-half_width : unsigned
+	+custom_draw(std::shared_ptr<Player> player) : void
+	+enemy_update(std::shared_ptr<Player> player) : void
+	+push_back(std::shared_ptr<SpriteTexture> __x) : void
+	+remove(const std::shared_ptr<SpriteTexture>& __x) : void
+	+update() : void
+}
+
+
+class MagicData {
+	+cost : int
+	+strength : int
+	+graphic : std::string
+}
+
+
+class MonsterData {
+	+attack_radius : int
+	+damage : int
+	+exp : int
+	+health : int
+	+notice_radius : int
+	+resistance : int
+	+speed : int
+	+attack_sound : std::string
+	+attack_type : std::string
+}
+
+
+class WeaponData {
+	+cooldown : int
+	+damage : int
+	+graphic : std::string
+}
+
+
+namespace py {
+	class Rect <template<typename T>> {
+		+Rect()
+		+Rect(const sf::Rect<T>& rect)
+		+Rect(T rectLeft, T rectTop, T rectWidth, T rectHeight)
+		+centerx : T
+		+centery : T
+		+inflate(T x, T y) : py::Rect<T>
+		+center() : sf::Vector2<T>
+		+midbottom() : sf::Vector2f
+		+midleft() : sf::Vector2f
+		+midright() : sf::Vector2f
+		+midtop() : sf::Vector2f
+		+center(const sf::Vector2<T>& center) : void
+		+set(const std::pair<std::string, sf::Vector2f>& pos) : void
+		+transform(T x, T y) : void
+	}
+
+	class Vector2 <template<typename T>> {
+		+Vector2()
+		+Vector2(const sf::Vector2<T>& other)
+		+Vector2(T X, T Y)
+		+distance_to(const py::Vector2<T>& v) : float
+		+magnitude() : float
+		+normalize() : py::Vector2<T>
+	}
+}
+
+
+
+
+
+/' Inheritance relationships '/
+
+.DeferredSpriteManager <|-- .SpriteManager
+
+
+.Entity <|-- .Enemy
+
+
+.Entity <|-- .Player
+
+
+.SpriteTexture <|-- .Entity
+
+
+.SpriteTexture <|-- .ParticleEffect
+
+
+.SpriteTexture <|-- .Tile
+
+
+.SpriteTexture <|-- .Weapon
+
+
+
+
+
+/' Aggregation relationships '/
+
+.AnimationPlayer *-- .DeferredSpriteManager
+
+
+.AnimationPlayer "2" *-- .SpriteTexture
+
+
+.Enemy *-- .DeferredSpriteManager
+
+
+.Enemy *-- .SpriteTexture
+
+
+.Entity *-- .SpriteTexture
+
+
+.Item *-- py.Rect
+
+
+.Level *-- .AnimationPlayer
+
+
+.Level *-- .MagicPlayer
+
+
+.Level *-- .Player
+
+
+.Level *-- .SpriteManager
+
+
+.Level "4" *-- .SpriteTexture
+
+
+.Level *-- .UI
+
+
+.Level *-- .Upgrade
+
+
+.Level *-- .YSortCameraGroup
+
+
+.MagicPlayer *-- .AnimationPlayer
+
+
+.ParticleEffect *-- .DeferredSpriteManager
+
+
+.ParticleEffect *-- .SpriteTexture
+
+
+.Player *-- .SpriteTexture
+
+
+.SpriteManager "4" *-- .SpriteTexture
+
+
+.SpriteManager *-- .YSortCameraGroup
+
+
+.SpriteTexture "2" *-- py.Rect
+
+
+.UI "2" *-- py.Rect
+
+
+.UI "2" *-- .SpriteTexture
+
+
+.Upgrade *-- .Item
+
+
+.Upgrade *-- .Player
+
+
+.YSortCameraGroup "2" *-- .SpriteTexture
+
+
+
+
+
+
+/' Nested objects '/
+
+
+
+@enduml

@@ -15,6 +15,9 @@ add_executable(sfmlZelda
     src/upgrade.cpp
     src/entity.cpp
     src/pygame_adapter.cpp
+    src/magic.cpp
+    src/particles.cpp
+    src/ui.cpp
     src/tile.cpp)
 
 target_link_libraries(sfmlZelda

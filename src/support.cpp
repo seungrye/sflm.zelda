@@ -94,6 +94,51 @@ SpriteTexture::get_rect(const std::pair<std::string, sf::Vector2f> &pos)
   return this->rect_;
 }
 
+auto SpriteTexture::set_position(const std::pair<std::string, sf::Vector2f> &pos) -> void
+{
+  if (!pos.first.compare("center"))
+  {
+    this->get_rect(pos);
+  }
+  this->sprite_.setPosition({this->rect_.left, this->rect_.top});
+}
+
+auto SpriteTexture::get_global_bounds() -> const py::Rect<float>
+{
+  return py::Rect<float>(this->sprite_.getGlobalBounds());
+}
+
+/**
+ * @brief sprite 의 hitbox 와 충될되는 면적이 있는지 여부를 반환
+ *
+ * @param rect 대상 면적
+ * @return true
+ * @return false
+ */
+bool SpriteTexture::colliderect(const py::Rect<float> &rect, sf::Rect<float> &intersection)
+{
+  return this->hitbox_.intersects(rect, intersection);
+}
+
+/**
+ * @brief 특정 타입의 sprite 인지 체크
+ *
+ * @param sprite_type
+ * @return true 파라메터로 전달된 타입과 매칭될 경우
+ * @return false 파라메터로 전달된 타입과 매칭되지 않을 경우
+ */
+bool SpriteTexture::is(std::string sprite_type)
+{
+  return !this->sprite_type_.compare(sprite_type);
+}
+
+void SpriteTexture::flip(bool x, bool y)
+{
+
+  this->sprite_.setOrigin({this->sprite_.getLocalBounds().width, 0});
+  this->sprite_.setScale({x ? -1.f : 1.f, y ? -1.f : 1.f});
+}
+
 const py::Rect<float> &SpriteTexture::rect() { return this->rect_; }
 
 const py::Rect<float> &SpriteTexture::hitbox() { return this->hitbox_; }

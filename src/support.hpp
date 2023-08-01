@@ -20,24 +20,13 @@ public:
   SpriteTexture(const sf::Texture &texture);
 
   bool loadFromFile(const std::string &filename, const sf::IntRect &area = sf::IntRect());
-
   void set_origin(const sf::Vector2f &offset);
-  void set_position(const std::pair<std::string, sf::Vector2f> &pos)
-  {
-    if (!pos.first.compare("center"))
-    {
-      this->get_rect(pos);
-    }
-    this->sprite_.setPosition({this->rect_.left, this->rect_.top});
-  }
+  void set_position(const std::pair<std::string, sf::Vector2f> &pos);
   const py::Rect<float> &get_rect(const std::pair<std::string, sf::Vector2f> &pos);
   const py::Rect<float> &rect();
   const sf::Sprite &surf();
   const py::Rect<float> &hitbox();
-  const py::Rect<float> get_global_bounds()
-  {
-    return py::Rect<float>(this->sprite_.getGlobalBounds());
-  }
+  const py::Rect<float> get_global_bounds();
   const std::string &sprite_type() { return this->sprite_type_; }
 
   /**
@@ -47,12 +36,7 @@ public:
    * @return true
    * @return false
    */
-  bool colliderect(const py::Rect<float> &rect, sf::Rect<float> &intersection)
-  {
-    return this->hitbox_.intersects(rect, intersection);
-  }
-
-  virtual void update() {}
+  bool colliderect(const py::Rect<float> &rect, sf::Rect<float> &intersection);
 
   /**
    * @brief 특정 타입의 sprite 인지 체크
@@ -61,20 +45,11 @@ public:
    * @return true 파라메터로 전달된 타입과 매칭될 경우
    * @return false 파라메터로 전달된 타입과 매칭되지 않을 경우
    */
-  bool is(std::string sprite_type)
-  {
-    return !this->sprite_type_.compare(sprite_type);
-  }
+  bool is(std::string sprite_type);
+  void flip(bool x, bool y);
 
-  void flip(bool x, bool y)
-  {
-
-    this->sprite_.setOrigin({this->sprite_.getLocalBounds().width, 0});
-    this->sprite_.setScale({x ? -1.f : 1.f, y ? -1.f : 1.f});
-  }
-
-private:
-  const sf::IntRect &getTextureRect();
+public:
+  virtual void update() {}
 
 public:
   std::shared_ptr<sf::Texture> texture_; //! 필수
@@ -84,6 +59,9 @@ protected:
   py::Rect<float> rect_;
   py::Rect<float> hitbox_;
   std::string sprite_type_;
+
+private:
+  const sf::IntRect &getTextureRect();
 };
 
 std::vector<std::vector<std::string>> import_csv_layout(const std::string &filename);
