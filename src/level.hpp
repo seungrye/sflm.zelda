@@ -12,6 +12,7 @@
 #include "upgrade.hpp"
 #include "sprite_manager.hpp"
 #include "ysort_camera_group.hpp"
+#include "sprite_manager.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <memory>
@@ -19,7 +20,7 @@
 #include <iostream>
 #include <list>
 
-class Level
+class Level : public SpriteManager
 {
 public:
   Level();
@@ -27,6 +28,33 @@ public:
   void create_map();
   void run();
   void toggle_menu() { this->game_paused = !this->game_paused; }
+
+  void kill(const SpriteTexture *sprite_texture) override
+  {
+    auto found = this->visible_sprites.find_if(
+        [sprite_texture](std::shared_ptr<SpriteTexture> item) -> bool
+        { return item.get() == sprite_texture; });
+
+    this->kill_queue.push_back(*found);
+  }
+
+  void kill(const std::shared_ptr<SpriteTexture> &sprite_texture) override
+  {
+    this->kill(sprite_texture.get());
+  }
+
+private:
+  void remove_dead_sprites()
+  {
+    for (const auto &sprite : this->kill_queue)
+    {
+      this->visible_sprites.remove(sprite);
+      this->obstacle_sprites.remove(sprite);
+      this->attack_sprites.remove(sprite);
+      this->attackable_sprites.remove(sprite);
+    }
+    kill_queue.clear();
+  }
 
 private:
   void player_attack_logic();
@@ -54,8 +82,6 @@ private:
   std::shared_ptr<Upgrade> upgrade;
   std::shared_ptr<AnimationPlayer> animation_player;
   std::shared_ptr<MagicPlayer> magic_player;
-
-  SpriteManager sprite_manager;
 
   bool game_paused;
 };

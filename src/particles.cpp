@@ -21,7 +21,7 @@
  *   std::vector<std::shared_ptr<SpriteTexture>> spriteFrames = {frame1, frame2, frame3};
  *   ParticleEffect particleEffect(position, spriteFrames);
  */
-ParticleEffect::ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames, DeferredSpriteManager &sprite_manager)
+ParticleEffect::ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames, SpriteManager &sprite_manager)
     : sprite_manager(sprite_manager)
 {
     // 스프라이트 프레임 목록 내의 각 스프라이트를 복제하여 새로운 스프라이트 목록(frames)에 추가합니다.
@@ -45,7 +45,7 @@ void ParticleEffect::animate()
     if (this->frame_index >= static_cast<float>(this->frames.size()))
     {
         this->frame_index = 0.f;
-        this->sprite_manager.deferred_kill(this);
+        this->sprite_manager.kill(this);
     }
     else
     {
@@ -83,7 +83,7 @@ void ParticleEffect::update_sprite(std::shared_ptr<SpriteTexture> sprite)
     this->rect_ = sprite->rect();
 }
 
-AnimationPlayer::AnimationPlayer(DeferredSpriteManager &sprite_manager)
+AnimationPlayer::AnimationPlayer(SpriteManager &sprite_manager)
     : sprite_manager(sprite_manager),
       frames(
           {// magic

@@ -2,6 +2,7 @@
 #define __MAGIC_HPP__
 
 #include "particles.hpp"
+#include "player.hpp"
 #include <SFML/Audio.hpp>
 #include <memory>
 #include <iostream>

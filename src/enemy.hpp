@@ -21,7 +21,7 @@ public:
           const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
           const std::function<void(const sf::Vector2f, const std::string &)> &trigger_death_particles,
           const std::function<void(int)> &add_exp,
-          DeferredSpriteManager &sprite_manager);
+          SpriteManager &sprite_manager);
     void import_graphics(const std::string &monster_name);
     void animate();
     void update() override;
@@ -70,7 +70,7 @@ private:
     sf::SoundBuffer attack_sound_buffer;
     sf::Sound attack_sound;
 
-    DeferredSpriteManager &sprite_manager;
+    SpriteManager &sprite_manager;
 };
 
 #endif /* __ENEMY_HPP__ */

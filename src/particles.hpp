@@ -7,7 +7,7 @@
 class ParticleEffect : public SpriteTexture
 {
 public:
-    ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames, DeferredSpriteManager &sprite_manager);
+    ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames, SpriteManager &sprite_manager);
     void animate();
     void update() override;
 
@@ -17,13 +17,13 @@ private:
     float frame_index;
     float animation_speed;
     std::vector<std::shared_ptr<SpriteTexture>> frames;
-    DeferredSpriteManager &sprite_manager;
+    SpriteManager &sprite_manager;
 };
 
 class AnimationPlayer
 {
 public:
-    AnimationPlayer(DeferredSpriteManager &sprite_manager);
+    AnimationPlayer(SpriteManager &sprite_manager);
     std::shared_ptr<SpriteTexture> create_grass_particles(const py::Vector2f &pos);
     std::shared_ptr<SpriteTexture> create_particles(const py::Vector2f &pos, const std::string &attack_type);
 
@@ -39,7 +39,7 @@ private:
 private:
     std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> frames;
     std::vector<std::vector<std::shared_ptr<SpriteTexture>>> leaf_frames;
-    DeferredSpriteManager &sprite_manager;
+    SpriteManager &sprite_manager;
 };
 
 #endif /* __PARTICLES_HPP__ */

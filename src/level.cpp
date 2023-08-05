@@ -18,11 +18,7 @@
 
 Level::Level()
     : game_paused(false),
-      sprite_manager({visible_sprites,
-                      this->obstacle_sprites,
-                      this->attackable_sprites,
-                      this->attack_sprites}),
-      animation_player(std::make_shared<AnimationPlayer>(this->sprite_manager)),
+      animation_player(std::make_shared<AnimationPlayer>(*this)),
       magic_player(std::make_shared<MagicPlayer>(this->animation_player))
 {
   this->create_map();
@@ -123,7 +119,8 @@ void Level::create_map()
             if (!monster_name.empty())
             {
               auto enemy = std::make_shared<Enemy>(
-                  monster_name, sf::Vector2f(x, y),
+                  monster_name,
+                  sf::Vector2f(x, y),
                   this->obstacle_sprites,
                   [this](const sf::Vector2f &pos, const std::string &monster_name)
                   {
@@ -133,7 +130,7 @@ void Level::create_map()
                   {
                     this->add_exp(exp);
                   },
-                  this->sprite_manager);
+                  *this);
               this->visible_sprites.push_back(enemy);
               this->attackable_sprites.push_back(enemy);
             }
@@ -169,7 +166,7 @@ void Level::destroy_attack()
 {
   if (this->current_attack)
   {
-    this->sprite_manager.deferred_kill(this->current_attack);
+    this->kill(this->current_attack);
     this->current_attack = nullptr;
   }
 }
@@ -213,7 +210,7 @@ void Level::run()
     this->visible_sprites.update();
     this->visible_sprites.enemy_update(this->player);
     this->player_attack_logic();
-    this->sprite_manager.kill();
+    this->remove_dead_sprites();
   }
 }
 
@@ -236,7 +233,7 @@ void Level::player_attack_logic()
           this->visible_sprites.push_back(particle);
         }
 
-        this->sprite_manager.deferred_kill(collision_sprite);
+        this->kill(collision_sprite);
       }
       else if (!collision_sprite->sprite_type().compare("enemy"))
       {
