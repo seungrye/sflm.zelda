@@ -7,16 +7,17 @@
 class ParticleEffect : public SpriteTexture
 {
 public:
-    ParticleEffect(const py::Vector2f &pos, const std::vector<std::shared_ptr<SpriteTexture>> &sprite_frames, SpriteManager &sprite_manager);
+    ParticleEffect(const py::Vector2f &pos, const std::string& sprite_type, SpriteManager &sprite_manager);
     void animate();
     void update() override;
 
 private:
-    void update_sprite(std::shared_ptr<SpriteTexture> sprite);
+    void update_sprite(const sf::Texture& texture);
 
+    const py::Vector2f pos;
     float frame_index;
     float animation_speed;
-    std::vector<std::shared_ptr<SpriteTexture>> frames;
+    const std::vector<sf::Texture>& frames;
     SpriteManager &sprite_manager;
 };
 
@@ -37,8 +38,6 @@ private:
     std::vector<std::shared_ptr<SpriteTexture>> reflect_images(const std::vector<std::shared_ptr<SpriteTexture>> &frames);
 
 private:
-    std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> frames;
-    std::vector<std::vector<std::shared_ptr<SpriteTexture>>> leaf_frames;
     SpriteManager &sprite_manager;
 };
 

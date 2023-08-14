@@ -17,6 +17,7 @@ add_executable(sfmlZelda
     src/pygame_adapter.cpp
     src/magic.cpp
     src/particles.cpp
+    src/sprite_manager.cpp
     src/ui.cpp
     src/tile.cpp)
 
