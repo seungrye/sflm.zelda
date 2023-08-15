@@ -83,7 +83,7 @@ void Enemy::get_status(std::shared_ptr<Player> player)
     auto distance = get_object_distance_direction(this->rect_, player->rect()).first;
     if (this->can_attack && distance < this->attack_radius)
     {
-        if (!this->status->is("attack"))
+        if (!this->status->eq("attack"))
         {
             this->frame_index = 0;
             this->status = std::make_shared<EnemyAttackState>(
@@ -103,7 +103,7 @@ void Enemy::get_status(std::shared_ptr<Player> player)
     }
     else
     {
-        if (!this->status->is("idle"))
+        if (!this->status->eq("idle"))
         {
             this->status = std::make_shared<EnemyIdleState>(
                 this->direction);
@@ -124,7 +124,7 @@ void Enemy::animate()
     this->frame_index += this->animation_speed;
     if (this->frame_index >= static_cast<float>(animation.size()))
     {
-        if (this->status->is("attack"))
+        if (this->status->eq("attack"))
         {
             this->can_attack = false;
         }

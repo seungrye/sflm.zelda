@@ -26,7 +26,7 @@ public: // interface
 
 public: // implement (can overridable)
     virtual const std::string &get() { return name; }
-    virtual bool is(const std::string &name) { return !this->name.compare(name); }
+    virtual bool eq(const std::string &name) { return !this->name.compare(name); }
 
 protected:
     const std::string name;
