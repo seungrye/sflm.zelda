@@ -23,9 +23,13 @@ Enemy::Enemy(const std::string &monster_name,
     this->sprite_type_ = "enemy";
     this->import_graphics(monster_name);
     this->status = "idle";
-
-    auto animation = this->animations[this->status];
+    
+    auto name = monster_name + "/" + this->status;
+    auto& animation = this->sprite_manager.textures(name);
     this->update_sprite(animation[static_cast<int>(this->frame_index)]);
+    // set object rectangle
+    auto rect = this->sprite_.getTextureRect();
+    this->rect_ = py::Rect<float>(rect.left, rect.top, rect.width, rect.height);
     this->get_rect({"topleft", pos});
     this->hitbox_ = this->rect_.inflate(0, -26);
 
@@ -57,10 +61,9 @@ Enemy::Enemy(const std::string &monster_name,
 void Enemy::import_graphics(const std::string &monster_name)
 {
     auto base_path = std::experimental::filesystem::path("./src/graphics/monsters");
-    this->animations = {
-        {"idle", import_folder(base_path / this->monster_name / "idle")},
-        {"move", import_folder(base_path / this->monster_name / "move")},
-        {"attack", import_folder(base_path / this->monster_name / "attack")}};
+    sprite_manager.import(this->monster_name + "/idle", base_path / this->monster_name / "idle");
+    sprite_manager.import(this->monster_name + "/move", base_path / this->monster_name / "move");
+    sprite_manager.import(this->monster_name + "/attack", base_path / this->monster_name / "attack");
 }
 
 std::pair<float, py::Vector2f> Enemy::get_player_distance_direction(std::shared_ptr<Player> player)
@@ -114,7 +117,8 @@ void Enemy::actions(std::shared_ptr<Player> player)
 
 void Enemy::animate()
 {
-    auto animation = this->animations[this->status];
+    auto name = monster_name + "/" + this->status;
+    auto &animation = this->sprite_manager.textures(name);
 
     this->frame_index += this->animation_speed;
     if (this->frame_index >= static_cast<float>(animation.size()))
@@ -213,9 +217,7 @@ void Enemy::cooldowns()
     }
 }
 
-void Enemy::update_sprite(std::shared_ptr<SpriteTexture> sprite)
+void Enemy::update_sprite(const sf::Texture& texture)
 {
-    this->texture_ = sprite->texture_; // 이걸 public 이 아닌 protected 로 바꿀수가 없을까?
-    this->sprite_.setTexture(*this->texture_);
-    this->rect_ = sprite->rect();
+    this->sprite_.setTexture(texture);
 }

@@ -35,7 +35,7 @@ private:
     void actions(std::shared_ptr<Player> player);
     std::pair<float, py::Vector2f> get_player_distance_direction(std::shared_ptr<Player> player);
     void get_status(std::shared_ptr<Player> player);
-    void update_sprite(std::shared_ptr<SpriteTexture> sprite);
+    void update_sprite(const sf::Texture& texture);
 
 private:
     std::function<void(const sf::Vector2f, const std::string &)> trigger_death_particles;
@@ -44,7 +44,6 @@ private:
 private:
     std::string status;
     // image
-    std::map<std::string, std::vector<std::shared_ptr<SpriteTexture>>> animations;
     std::string monster_name;
     int health;
     int exp;
