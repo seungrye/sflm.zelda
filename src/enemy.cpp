@@ -3,14 +3,25 @@
 #include <experimental/filesystem>
 #include <algorithm>
 
+std::pair<float, py::Vector2f> get_object_distance_direction(
+    py::Rect<float> object,
+    py::Rect<float> target)
+{
+    auto object_vec = py::Vector2f(object.center());
+    auto target_vec = py::Vector2f(target.center());
+    auto distance = object_vec.distance_to(target_vec);
+    auto direction = (distance > 0) ? py::Vector2f(target_vec - object_vec).normalize() : py::Vector2f(0, 0);
+    return {distance, direction};
+}
+
 Enemy::Enemy(const std::string &monster_name,
              const sf::Vector2f &pos,
              const std::list<std::shared_ptr<SpriteTexture>> &obstacle_sprites,
              const std::function<void(const sf::Vector2f, const std::string &)> &trigger_death_particles,
              const std::function<void(int)> &add_exp,
-             SpriteManager &sprite_manager)
-    : status("idle"),
-      Entity(0, 0.15, {0, 0}, obstacle_sprites),
+             SpriteManager &sprite_manager,
+             std::shared_ptr<Player> player)
+    : Entity(0, 0.15, {0, 0}, obstacle_sprites),
       monster_name(monster_name),
       can_attack(true),
       attack_cooldown(sf::milliseconds(400)),
@@ -18,14 +29,15 @@ Enemy::Enemy(const std::string &monster_name,
       invincibility_duration(sf::milliseconds(300)),
       trigger_death_particles(trigger_death_particles),
       add_exp(add_exp),
-      sprite_manager(sprite_manager)
+      sprite_manager(sprite_manager),
+      player(player)
 {
     this->sprite_type_ = "enemy";
     this->import_graphics(monster_name);
-    this->status = "idle";
-    
-    auto name = monster_name + "/" + this->status;
-    auto& animation = this->sprite_manager.textures(name);
+    this->status = std::make_shared<EnemyIdleState>(this->direction);
+
+    auto name = monster_name + "/" + this->status->get();
+    auto &animation = this->sprite_manager.textures(name);
     this->update_sprite(animation[static_cast<int>(this->frame_index)]);
     // set object rectangle
     auto rect = this->sprite_.getTextureRect();
@@ -54,7 +66,7 @@ Enemy::Enemy(const std::string &monster_name,
     this->hit_sound.setVolume(10);
 
     this->attack_sound_buffer.loadFromFile(monster_info->second.attack_sound);
-    this->attack_sound.setBuffer(this->attack_sound_buffer);
+    this->attack_sound.setBuffer(attack_sound_buffer);
     this->attack_sound.setVolume(10);
 }
 
@@ -66,64 +78,53 @@ void Enemy::import_graphics(const std::string &monster_name)
     sprite_manager.import(this->monster_name + "/attack", base_path / this->monster_name / "attack");
 }
 
-std::pair<float, py::Vector2f> Enemy::get_player_distance_direction(std::shared_ptr<Player> player)
-{
-    auto enemy_vec = py::Vector2f(this->rect_.center());
-    auto player_rect = player->rect();
-    auto player_vec = py::Vector2f(player_rect.center());
-    auto distance = enemy_vec.distance_to(player_vec);
-    auto direction = (distance > 0) ? py::Vector2f(player_vec - enemy_vec).normalize() : py::Vector2f(0, 0);
-    return {distance, direction};
-}
-
 void Enemy::get_status(std::shared_ptr<Player> player)
 {
-    auto distance = this->get_player_distance_direction(player).first;
+    auto distance = get_object_distance_direction(this->rect_, player->rect()).first;
     if (this->can_attack && distance < this->attack_radius)
     {
-        if (this->status.compare("attack"))
+        if (!this->status->is("attack"))
         {
             this->frame_index = 0;
+            this->status = std::make_shared<EnemyAttackState>(
+                this->player,
+                this->attack_time,
+                this->attack_sound,
+                this->damage,
+                this->attack_type);
         }
-        this->status = "attack";
     }
     else if (distance < this->notice_radius)
     {
-        this->status = "move";
+        this->status = std::make_shared<EnemyMoveState>(
+            this->direction,
+            this->rect_,
+            this->player);
     }
     else
     {
-        this->status = "idle";
+        if (!this->status->is("idle"))
+        {
+            this->status = std::make_shared<EnemyIdleState>(
+                this->direction);
+        }
     }
 }
 
 void Enemy::actions(std::shared_ptr<Player> player)
 {
-    if (!this->status.compare("attack"))
-    {
-        this->attack_sound.play();
-        this->attack_time.restart();
-        player->damage_player(this->damage, this->attack_type);
-    }
-    else if (!this->status.compare("move"))
-    {
-        this->direction = this->get_player_distance_direction(player).second;
-    }
-    else
-    {
-        this->direction = py::Vector2f(0, 0);
-    }
+    this->status->action();
 }
 
 void Enemy::animate()
 {
-    auto name = monster_name + "/" + this->status;
+    auto name = monster_name + "/" + this->status->get();
     auto &animation = this->sprite_manager.textures(name);
 
     this->frame_index += this->animation_speed;
     if (this->frame_index >= static_cast<float>(animation.size()))
     {
-        if (!this->status.compare("attack"))
+        if (this->status->is("attack"))
         {
             this->can_attack = false;
         }
@@ -151,12 +152,9 @@ void Enemy::update()
     this->animate();
     this->cooldowns();
     this->check_death();
-}
 
-void Enemy::enemy_update(std::shared_ptr<Player> player)
-{
-    this->get_status(player);
-    this->actions(player);
+    this->get_status(this->player);
+    this->actions(this->player);
 }
 
 void Enemy::get_damage(std::shared_ptr<Player> player, const std::string &attack_type)
@@ -164,7 +162,7 @@ void Enemy::get_damage(std::shared_ptr<Player> player, const std::string &attack
     if (this->vulernable)
     {
         this->hit_sound.play();
-        this->direction = this->get_player_distance_direction(player).second;
+        this->direction = get_object_distance_direction(this->rect_, player->rect()).second;
         if (!attack_type.compare("weapon"))
         {
             this->health -= player->get_full_weapon_damage();
@@ -217,7 +215,7 @@ void Enemy::cooldowns()
     }
 }
 
-void Enemy::update_sprite(const sf::Texture& texture)
+void Enemy::update_sprite(const sf::Texture &texture)
 {
     this->sprite_.setTexture(texture);
 }

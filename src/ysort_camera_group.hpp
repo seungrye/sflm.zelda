@@ -14,7 +14,6 @@ public:
     YSortCameraGroup();
     void custom_draw(std::shared_ptr<Player> player);
     void update();
-    void enemy_update(std::shared_ptr<Player> player);
     void push_back(std::shared_ptr<SpriteTexture> __x) { this->sprites.push_back(__x); }
     void remove(const std::shared_ptr<SpriteTexture> &__x) { this->sprites.remove(__x); }
 

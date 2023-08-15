@@ -102,7 +102,36 @@ void Level::create_map()
             this->upgrade = std::make_shared<Upgrade>(this->player);
             this->visible_sprites.push_back(this->player);
           }
-          else
+        }
+
+        col_index++;
+      }
+      row_index++;
+    }
+  }
+
+  for (const auto &entry : layouts)
+  {
+    auto style = entry.first;
+    auto layout = entry.second;
+    int row_index = 0;
+    for (const auto &row : layout)
+    {
+      int col_index = 0;
+      for (const auto &col : row)
+      {
+        if (!col.compare("-1"))
+        {
+          col_index++;
+          continue;
+        }
+
+        auto x = col_index * TILESIZE;
+        auto y = row_index * TILESIZE;
+
+        if (!style.compare("entities"))
+        {
+          if (col.compare("394")) // not 394
           {
             auto monster_name = [&col]() -> std::string
             {
@@ -130,13 +159,14 @@ void Level::create_map()
                   {
                     this->add_exp(exp);
                   },
-                  *this);
+                  *this,
+                  this->player);
               this->visible_sprites.push_back(enemy);
               this->attackable_sprites.push_back(enemy);
             }
           }
         }
-
+        
         col_index++;
       }
       row_index++;
@@ -208,7 +238,6 @@ void Level::run()
   else
   {
     this->visible_sprites.update();
-    this->visible_sprites.enemy_update(this->player);
     this->player_attack_logic();
     this->remove_dead_sprites();
   }
@@ -315,18 +344,6 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
   }
 
   GameWindow::instance().screen().display();
-}
-
-void YSortCameraGroup::enemy_update(std::shared_ptr<Player> player)
-{
-  for (const auto &sprite : this->sprites)
-  {
-    if (sprite->is("enemy"))
-    {
-      auto enemy = std::static_pointer_cast<Enemy>(sprite);
-      enemy->enemy_update(player);
-    }
-  }
 }
 
 void YSortCameraGroup::update()
