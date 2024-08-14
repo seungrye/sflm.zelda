@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(SFML 2.5 COMPONENTS graphics audio window system REQUIRED)
 
-add_executable(sfmlZelda 
-    src/level.cpp 
+add_executable(sfmlZelda
+    src/level.cpp
     src/main.cpp
     src/player.cpp
     src/settings.cpp
@@ -22,8 +22,8 @@ add_executable(sfmlZelda
     src/tile.cpp)
 
 target_link_libraries(sfmlZelda
-    sfml-graphics 
-    sfml-window 
+    sfml-graphics
+    sfml-window
     sfml-system
     sfml-audio
     stdc++fs)

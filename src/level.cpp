@@ -321,7 +321,7 @@ void YSortCameraGroup::custom_draw(std::shared_ptr<Player> player)
     sprite->set_origin(offset_rect);
     GameWindow::instance().screen().draw(sprite->surf());
 
-#if 1 // draw hitbox (for debugging)
+#if 0 // draw hitbox (for debugging)
     sf::RectangleShape rectangle;
     rectangle.setSize(sf::Vector2f(sprite->rect().getSize()));
     rectangle.setOutlineColor(sf::Color::Blue);
