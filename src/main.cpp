@@ -1,9 +1,9 @@
 #include "game_window.hpp"
 #include "level.hpp"
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Audio/Music.hpp>
 #include <cassert>
 #include <climits>
 #include <unistd.h>
@@ -17,7 +17,7 @@ public:
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(FPS);
 
-    // // sound
+    // 음악 재생
     sf::Music music;
     auto r = music.openFromFile("./src/audio/main.ogg");
     assert(r);
@@ -38,7 +38,7 @@ public:
         }
       }
 
-      sf::RenderTexture& renderTexture = GameWindow::instance().screen();
+      sf::RenderTexture &renderTexture = GameWindow::instance().screen();
       renderTexture.clear(WATER_COLOR);
 
       // 게임 로직을 여기에서 업데이트합니다.
@@ -56,6 +56,9 @@ private:
   Level level;
 };
 
+/**
+ * 현재 경로를 출력
+ */
 void print_cwd() {
   char cwd[PATH_MAX];
   assert(getcwd(cwd, sizeof(cwd)) != NULL);
