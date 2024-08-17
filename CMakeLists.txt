@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 project(sfmlZelda)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 23)
 
 find_package(SFML 2.5 COMPONENTS graphics audio window system REQUIRED)
 
