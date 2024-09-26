@@ -1,4 +1,6 @@
 #include "ui.hpp"
+#include "settings.hpp"
+#include "game_window.hpp"
 
 UI::UI()
     : health_bar_rect(10, 10, HEALTH_BAR_WIDTH, BAR_HEIGHT),

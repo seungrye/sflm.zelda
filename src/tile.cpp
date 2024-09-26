@@ -1,4 +1,5 @@
 #include "tile.hpp"
+#include "settings.hpp"
 
 Tile::Tile(const sf::Vector2f &pos, std::string sprite_type)
     : SpriteTexture(TILESIZE, TILESIZE)

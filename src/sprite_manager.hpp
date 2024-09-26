@@ -4,7 +4,6 @@
 #include "support.hpp"
 #include <vector>
 #include <memory>
-#include <experimental/filesystem>
 
 class SpriteManager
 {

@@ -1,6 +1,5 @@
 #include "settings.hpp"
 #include <string>
-#include <vector>
 #include <cassert>
 
 std::map<std::string, int> HITBOX_OFFSET = {

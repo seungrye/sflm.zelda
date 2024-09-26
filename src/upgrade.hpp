@@ -1,7 +1,6 @@
 #ifndef __UPGRADE_HPP__
 #define __UPGRADE_HPP__
 
-#include "settings.hpp"
 #include "pygame_adapter.hpp"
 #include <memory>
 #include <vector>

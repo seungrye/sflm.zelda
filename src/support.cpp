@@ -1,9 +1,7 @@
 #include "support.hpp"
-#include "level.hpp"
 #include "pygame_adapter.hpp"
 #include <experimental/filesystem>
 #include <fstream>
-#include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>

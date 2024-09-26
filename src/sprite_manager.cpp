@@ -1,4 +1,5 @@
 #include "sprite_manager.hpp"
+#include <experimental/filesystem>
 
 void SpriteManager::import(const std::string &name, const std::string &path)
 {

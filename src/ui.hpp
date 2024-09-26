@@ -4,10 +4,7 @@
 #include "pygame_adapter.hpp"
 #include "player.hpp"
 #include "support.hpp"
-#include "settings.hpp"
-#include "game_window.hpp"
 #include <memory>
-#include <sstream>
 
 class UI
 {

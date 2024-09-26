@@ -6,7 +6,6 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/Rect.hpp>
-#include <algorithm>
 #include <experimental/filesystem>
 
 #include <cassert>

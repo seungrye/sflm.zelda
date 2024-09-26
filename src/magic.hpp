@@ -5,7 +5,6 @@
 #include "player.hpp"
 #include <SFML/Audio.hpp>
 #include <memory>
-#include <iostream>
 #include <cassert>
 
 class MagicPlayer

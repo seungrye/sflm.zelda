@@ -2,7 +2,6 @@
 #define __TILE_HPP__
 
 #include "pygame_adapter.hpp"
-#include "settings.hpp"
 #include "support.hpp"
 #include <SFML/System/Vector2.hpp>
 

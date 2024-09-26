@@ -2,7 +2,6 @@
 #define __SETTINGS_HPP__
 
 #include <string>
-#include <vector>
 #include <SFML/Graphics.hpp>
 #include <cassert>
 

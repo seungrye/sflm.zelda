@@ -12,6 +12,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include "settings.hpp"
+#include "game_window.hpp"
 
 Level::Level()
     : game_paused(false),
